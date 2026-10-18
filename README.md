@@ -7,7 +7,7 @@ It gives Clyde and Abilene families short, plain-language info on 9 health topic
 - **Built with:** [Astro](https://astro.build) (static site), plain CSS, Markdown content
 - **Live content:** a Netlify Function that calls [MyHealthfinder](https://odphp.health.gov/myhealthfinder) (health.gov) and [MedlinePlus](https://medlineplus.gov) (National Library of Medicine). No API keys are needed.
 - **Hosting:** Netlify. Every push to `main` deploys automatically.
-- **Live site:** <https://clyde-cmps-health.netlify.app> · **Netlify dashboard:** <https://app.netlify.com/projects/clyde-cmps-health>
+- **Live site:** <https://chshealthcare.org> (also <https://clyde-cmps-health.netlify.app>) · **Netlify dashboard:** <https://app.netlify.com/projects/clyde-cmps-health>
 
 ---
 
@@ -171,7 +171,7 @@ You can also connect from the terminal instead of the dashboard: `netlify init`.
 - [x] Clyde CISD logo use confirmed
 - [ ] Real event dates and locations in `src/data/events.json`
 - [ ] The TODOs in `src/data/resources.json` checked
-- [ ] `site` in `astro.config.mjs` matches the real URL
+- [x] `site` in `astro.config.mjs` matches the real URL (chshealthcare.org)
 
 ---
 

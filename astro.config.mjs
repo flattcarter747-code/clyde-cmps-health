@@ -1,7 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 
-// TODO: update `site` once Netlify gives us our real URL (or a custom domain).
+// Our real address. Netlify also serves https://clyde-cmps-health.netlify.app.
 export default defineConfig({
-  site: 'https://clyde-cmps-health.netlify.app',
+  site: 'https://chshealthcare.org',
 });
