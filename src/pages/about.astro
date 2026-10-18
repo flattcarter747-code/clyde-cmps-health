@@ -32,6 +32,10 @@ import Icon from '../components/Icon.astro';
         </blockquote>
 
         <h2>Who we are</h2>
+        <picture class="cisd-logo">
+          <source type="image/webp" srcset="/images/clyde-cisd-logo-240.webp 240w, /images/clyde-cisd-logo-480.webp 480w" sizes="160px" />
+          <img src="/images/clyde-cisd-logo-240.png" alt="Clyde CISD logo: a bulldog leaping through a gold letter C" width="240" height="213" loading="lazy" decoding="async" />
+        </picture>
         <p>
           Community Problem Solving (CmPS) is a program where students find a real problem in their own community and work to fix it.
           Our 2026–27 team is made up of Clyde High students who care about this town and the people in it.
@@ -104,6 +108,9 @@ import Icon from '../components/Icon.astro';
     font-size: 1.15rem; font-style: italic; line-height: 1.55;
   }
   .about-photos { display: grid; gap: 1.5rem; }
+  .cisd-logo { float: right; margin: 0 0 0.75rem 1rem; }
+  .cisd-logo img { width: 140px; height: auto; }
+  @media (min-width: 560px) { .cisd-logo img { width: 170px; } }
   @media (min-width: 560px) and (max-width: 899px) { .about-photos { grid-template-columns: repeat(2, 1fr); } }
   .about-photos figure { margin: 0; }
   .about-photos img { border-radius: var(--radius); border: 3px solid var(--black); aspect-ratio: 3 / 4; object-fit: cover; width: 100%; }

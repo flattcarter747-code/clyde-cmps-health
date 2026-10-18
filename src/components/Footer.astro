@@ -41,11 +41,21 @@ const hasInstagram = site.instagramUrl.startsWith('http');
         </ul>
       </div>
     </div>
-    <p class="footer-credit">A Clyde High School Community Problem Solving project. © {new Date().getFullYear()} Clyde High School CmPS.</p>
+    <div class="footer-credit">
+      <picture class="cisd-badge">
+        <source type="image/webp" srcset="/images/clyde-cisd-logo-240.webp 240w, /images/clyde-cisd-logo-480.webp 480w" sizes="88px" />
+        <img src="/images/clyde-cisd-logo-240.png" alt="Clyde CISD Bulldogs logo" width="240" height="213" loading="lazy" decoding="async" />
+      </picture>
+      <p>A Clyde High School Community Problem Solving project. © {new Date().getFullYear()} Clyde High School CmPS.</p>
+    </div>
   </div>
   <Stripes variant="corner" class="footer-stripes" />
 </footer>
 
 <style>
   .footer-stripes { right: -90px; bottom: -110px; width: 240px; opacity: 0.35; }
+  .footer-credit { display: flex; align-items: center; gap: 1rem; position: relative; z-index: 1; }
+  .footer-credit p { margin: 0; }
+  .cisd-badge { flex: none; background: #fff; border-radius: 12px; padding: 6px; border: 2px solid var(--gold); }
+  .cisd-badge img { width: 76px; height: auto; }
 </style>
