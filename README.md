@@ -103,7 +103,7 @@ The raw iPhone photos (HEIC) are **not** stored in the repo. Converted versions 
 
 To add or redo photos on a Mac: put the `.HEIC` files in a folder named `CmPS Assets copy` in the project root, add a friendly name for each in `scripts/convert-images.mjs`, then run `npm run images`. The script fixes the rotation and removes location (GPS) data.
 
-> ⚠️ Only use photos of students after our sponsor confirms we have permission.
+> ⚠️ Before adding any NEW photo that shows students, get permission from our sponsor first.
 
 ---
 
@@ -167,7 +167,8 @@ You can also connect from the terminal instead of the dashboard: `netlify init`.
 ## Before launch checklist
 
 - [ ] Instagram link set in `src/data/site.json`
-- [ ] Photo permission confirmed (see the TODO in `src/pages/about.astro`)
+- [x] Photo permission confirmed
+- [x] Clyde CISD logo use confirmed
 - [ ] Real event dates and locations in `src/data/events.json`
 - [ ] The TODOs in `src/data/resources.json` checked
 - [ ] `site` in `astro.config.mjs` matches the real URL

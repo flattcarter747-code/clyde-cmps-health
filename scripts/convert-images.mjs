@@ -15,8 +15,8 @@ const WIDTHS = [1600, 800];
 const NAMES = {
   IMG_7868: 'booth-wide',      // wide shot of the booth (no faces)
   IMG_7872: 'banner-closeup',  // hand-painted banner (no faces)
-  IMG_7856: 'team-at-table',   // TODO: confirm photo permission with sponsor before launch
-  IMG_3765: 'team-handing-out',// TODO: confirm photo permission with sponsor before launch
+  IMG_7856: 'team-at-table',   // students shown; permission confirmed Oct 2026
+  IMG_3765: 'team-handing-out',// students shown; permission confirmed Oct 2026
 };
 
 mkdirSync(OUT, { recursive: true });

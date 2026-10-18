@@ -3,7 +3,6 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Icon from '../components/Icon.astro';
 import Stripes from '../components/Stripes.astro';
-import Picture from '../components/Picture.astro';
 import survey from '../data/survey.json';
 
 const topics = (await getCollection('topics')).sort((a, b) => a.data.order - b.data.order);
@@ -31,15 +30,18 @@ const pct = (id: string, label: string) => {
           <a class="btn btn--ghost-light" href="/resources/">Get help near Clyde</a>
         </div>
       </div>
-      <figure class="hero-photo">
-        <Picture
-          name="booth-wide"
-          eager
-          sizes="(min-width: 860px) 40vw, 100vw"
-          alt="Our CmPS booth at the health fair: a white canopy over a table covered in health flyers, with a hand-painted kraft paper banner that reads Clyde CmPS in gold and black."
-        />
-        <figcaption>Come see us at the booth!</figcaption>
-      </figure>
+      <div class="hero-logo">
+        <picture>
+          <source type="image/webp" srcset="/images/health-care-logo-500.webp 500w, /images/health-care-logo-672.webp 672w" sizes="(min-width: 860px) 36vw, 90vw" />
+          <img
+            src="/images/health-care-logo-500.png"
+            srcset="/images/health-care-logo-500.png 500w, /images/health-care-logo-672.png 672w"
+            sizes="(min-width: 860px) 36vw, 90vw"
+            alt="Health Care logo: the word health in blue script above CARE, where the C is a stethoscope, the A is a syringe, and a red plus sign follows."
+            width="672" height="330" fetchpriority="high" decoding="async"
+          />
+        </picture>
+      </div>
     </div>
   </section>
 
