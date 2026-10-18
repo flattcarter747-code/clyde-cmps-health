@@ -1,0 +1,481 @@
+---
+// Admin panel: only reachable by typing chshealthcare.org/admin (never linked, not indexed).
+// The code check and all saving happen in Netlify Functions (admin-login, admin-api).
+import '@fontsource-variable/oswald/wght.css';
+import '@fontsource-variable/source-sans-3/wght.css';
+import '@fontsource/caveat/700.css';
+import '../../styles/global.css';
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow, noarchive" />
+    <meta name="referrer" content="no-referrer" />
+    <title>Admin | Know Your Health, Clyde</title>
+    <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+  </head>
+  <body class="admin">
+    <header class="admin-bar on-dark">
+      <div class="wrap">
+        <span class="logo"><span class="script">Clyde</span><span class="logo-text">Admin Panel<small>chshealthcare.org</small></span></span>
+        <div class="admin-who" hidden>
+          <span class="role-badge" id="role-badge"></span>
+          <button type="button" class="btn btn--ghost-light btn-sm" id="sign-out">Sign out</button>
+        </div>
+      </div>
+    </header>
+
+    <main id="main" class="wrap admin-main">
+      <!-- Sign in -->
+      <section id="login" class="login-card" aria-labelledby="login-title">
+        <h1 id="login-title">Admin sign in</h1>
+        <p>Enter your 10-digit access code.</p>
+        <form id="login-form" novalidate>
+          <label for="code" class="visually-hidden">Access code</label>
+          <input id="code" name="code" type="password" inputmode="numeric" autocomplete="off" maxlength="10" pattern="\d{10}" required class="code-input" placeholder="••••••••••" />
+          <button type="submit" class="btn btn--gold">Sign in</button>
+        </form>
+        <p id="login-msg" class="msg" role="alert" aria-live="assertive"></p>
+      </section>
+
+      <!-- Panel -->
+      <section id="panel" hidden>
+        <nav class="admin-tabs" aria-label="Admin sections" id="tabs"></nav>
+        <div id="view" class="admin-view" tabindex="-1"></div>
+      </section>
+    </main>
+
+    <div class="save-bar on-dark" id="save-bar" hidden>
+      <div class="wrap">
+        <label for="save-note" class="visually-hidden">What did you change? (optional)</label>
+        <input id="save-note" type="text" placeholder="What did you change? (optional)" maxlength="120" />
+        <button type="button" class="btn btn--gold" id="save-btn">Save &amp; publish</button>
+      </div>
+      <div class="wrap"><p id="save-msg" class="msg" role="status" aria-live="polite"></p></div>
+    </div>
+  </body>
+</html>
+
+<style is:global>
+  body.admin { background: var(--paper); padding-bottom: 9rem; }
+  body.admin [hidden] { display: none !important; }
+  .admin-bar { background: var(--black); color: var(--white); border-bottom: 4px solid var(--gold); }
+  .admin-bar .wrap { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 4rem; flex-wrap: wrap; }
+  .admin-who { display: flex; align-items: center; gap: 0.75rem; }
+  .role-badge { background: var(--gold); color: var(--black); font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; padding: 0.3rem 0.75rem; border-radius: 999px; }
+  .btn-sm { min-height: 44px; padding: 0.4rem 1rem; font-size: 1rem; }
+  .admin-main { padding-block: 2rem; }
+  .login-card { max-width: 26rem; margin: 3rem auto; background: var(--white); border: 3px solid var(--black); border-radius: var(--radius); padding: 1.75rem; box-shadow: var(--shadow-sticker); }
+  .login-card h1 { font-size: 2.2rem; }
+  .login-card form { display: grid; gap: 0.85rem; }
+  .code-input { font-size: 1.6rem; letter-spacing: 0.35em; text-align: center; padding: 0.7rem; border: 2px solid var(--black); border-radius: var(--radius-sm); width: 100%; }
+  .msg { min-height: 1.5em; margin: 0.75rem 0 0; font-weight: 600; }
+  .msg.err { color: var(--danger); }
+  .msg.ok { color: #1d6b2f; }
+  .on-dark .msg.ok { color: var(--gold); }
+  .on-dark .msg.err { color: #ffb4b4; }
+  .msg ul { margin: 0.4rem 0 0; font-weight: 400; }
+
+  .admin-tabs { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; }
+  .admin-tabs button { min-height: 44px; padding: 0.4rem 1.1rem; border: 2px solid var(--black); border-radius: 999px; background: var(--white); font-weight: 700; cursor: pointer; }
+  .admin-tabs button[aria-current='page'] { background: var(--black); color: var(--white); }
+  .admin-view:focus { outline: none; box-shadow: none; }
+  .admin-view h2 { margin-bottom: 0.35rem; }
+  .admin-view .hint { color: var(--ink-muted); margin: 0 0 1.25rem; max-width: 46rem; }
+  .card { background: var(--white); border: 2px solid var(--black); border-radius: var(--radius); padding: 1.1rem; margin-bottom: 1rem; }
+  .card-head { display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem; }
+  .card-head h3 { margin: 0; font-size: 1.25rem; }
+  .grid-2 { display: grid; gap: 0.85rem; }
+  @media (min-width: 720px) { .grid-2 { grid-template-columns: 1fr 1fr; } }
+  .field { display: grid; gap: 0.3rem; margin-bottom: 0.85rem; }
+  .field > span { font-weight: 700; }
+  .field small { color: var(--ink-muted); font-weight: 400; }
+  .field input[type='text'], .field input[type='url'], .field input[type='date'], .field input[type='number'], .field select, .field textarea, .raw-editor {
+    width: 100%; padding: 0.6rem 0.7rem; border: 2px solid #8a8173; border-radius: var(--radius-sm); background: var(--white); font: inherit; font-size: 1rem;
+  }
+  .field textarea { min-height: 6rem; resize: vertical; line-height: 1.45; }
+  .field textarea.tall { min-height: 18rem; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.95rem; }
+  .check { display: flex; align-items: center; gap: 0.5rem; min-height: 44px; font-weight: 600; }
+  .check input { width: 1.25rem; height: 1.25rem; }
+  .checks { display: flex; flex-wrap: wrap; gap: 0.25rem 1.25rem; }
+  .btn-small { min-height: 40px; padding: 0.3rem 0.9rem; border: 2px solid var(--black); border-radius: 999px; background: var(--white); font-weight: 700; cursor: pointer; }
+  .btn-small.danger { border-color: var(--danger); color: var(--danger); }
+  .btn-small.add { background: var(--gold); }
+  .link-row { display: grid; gap: 0.5rem; border-top: 1px solid var(--line); padding-top: 0.75rem; margin-top: 0.75rem; }
+  @media (min-width: 720px) { .link-row { grid-template-columns: 1fr 1.3fr 1.6fr auto; align-items: end; } .link-row .field { margin: 0; } .link-row .note-field { grid-column: 1 / -2; } }
+  .file-list { list-style: none; padding: 0; margin: 0; max-height: 26rem; overflow: auto; border: 2px solid var(--line); border-radius: var(--radius-sm); background: var(--white); }
+  .file-list li { margin: 0; }
+  .file-list button { width: 100%; text-align: left; padding: 0.55rem 0.8rem; min-height: 40px; border: 0; border-bottom: 1px solid var(--line); background: none; cursor: pointer; font-family: ui-monospace, Menlo, monospace; font-size: 0.92rem; }
+  .file-list button:hover { background: var(--gold-soft); }
+  .raw-editor { min-height: 28rem; font-family: ui-monospace, Menlo, monospace; font-size: 0.92rem; line-height: 1.45; }
+  .save-bar { position: fixed; left: 0; right: 0; bottom: 0; background: var(--black); color: var(--white); border-top: 4px solid var(--gold); padding: 0.75rem 0; z-index: 40; }
+  .save-bar .wrap:first-child { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+  .save-bar input { flex: 1 1 14rem; min-height: 48px; padding: 0.5rem 0.8rem; border-radius: var(--radius-sm); border: 2px solid var(--gold); font: inherit; }
+  .save-bar .msg { margin-top: 0.4rem; }
+  .save-bar a { color: var(--gold); }
+  .loading { color: var(--ink-muted); font-style: italic; }
+</style>
+
+<script>
+  type Role = 'developer' | 'editor';
+  const API = '/.netlify/functions/admin-api';
+  const TOKEN_KEY = 'chs-admin-token';
+  const $ = <T extends HTMLElement = HTMLElement>(sel: string) => document.querySelector(sel) as T;
+
+  let token = '';
+  let role: Role | null = null;
+  let current: { save: () => { path: string; sha: string | null; kind: string; data?: any; body?: string; content?: string }; onSaved?: (sha: string) => void } | null = null;
+  let dirty = false;
+
+  // ---------- tiny DOM helper ----------
+  function h(tag: string, attrs: Record<string, any> = {}, ...kids: any[]): HTMLElement {
+    const el = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs)) {
+      if (v == null || v === false) continue;
+      if (k.startsWith('on')) el.addEventListener(k.slice(2), v);
+      else if (k === 'value') (el as any).value = v;
+      else if (k === 'checked') (el as any).checked = v;
+      else el.setAttribute(k, v === true ? '' : String(v));
+    }
+    for (const kid of kids.flat()) if (kid != null && kid !== false) el.append(kid instanceof Node ? kid : document.createTextNode(String(kid)));
+    return el;
+  }
+  let uid = 0;
+  function field(label: string, input: HTMLElement, help?: string) {
+    const id = `f${++uid}`;
+    input.id = id;
+    input.addEventListener('input', () => (dirty = true));
+    input.addEventListener('change', () => (dirty = true));
+    return h('label', { class: 'field', for: id }, h('span', {}, label, help ? h('small', {}, ` ${help}`) : null), input);
+  }
+  const text = (v = '', type = 'text') => h('input', { type, value: v ?? '' }) as HTMLInputElement;
+  const area = (v = '', cls = '') => h('textarea', { class: cls, value: v ?? '' }) as HTMLTextAreaElement;
+  const lines = (arr?: string[]) => area((arr || []).join('\n'));
+  const toLines = (el: HTMLTextAreaElement) => el.value.split('\n').map((s) => s.trim()).filter(Boolean);
+  const check = (label: string, on: boolean) => {
+    const box = h('input', { type: 'checkbox', checked: on }) as HTMLInputElement;
+    box.addEventListener('change', () => (dirty = true));
+    return { box, el: h('label', { class: 'check' }, box, label) };
+  };
+
+  // ---------- API ----------
+  async function api(params: string | null, body?: any) {
+    const res = await fetch(params ? `${API}?${params}` : API, {
+      method: body ? 'POST' : 'GET',
+      headers: { Authorization: `Bearer ${token}`, ...(body ? { 'Content-Type': 'application/json' } : {}) },
+      body: body ? JSON.stringify(body) : undefined,
+    });
+    const data = await res.json().catch(() => ({}));
+    if (res.status === 401) { signOut('Your session ended. Please sign in again.'); throw new Error('signed out'); }
+    if (!res.ok) { const e: any = new Error(data.error || 'Something went wrong.'); e.details = data.details; throw e; }
+    return data;
+  }
+
+  // ---------- sign in / out ----------
+  const loginMsg = $('#login-msg');
+  $('#login-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const code = ($('#code') as HTMLInputElement).value.replace(/\D/g, '');
+    if (code.length !== 10) { loginMsg.className = 'msg err'; loginMsg.textContent = 'The code is 10 digits.'; return; }
+    loginMsg.className = 'msg'; loginMsg.textContent = 'Checking…';
+    try {
+      const res = await fetch('/.netlify/functions/admin-login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code }) });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Sign in failed.');
+      token = data.token;
+      sessionStorage.setItem(TOKEN_KEY, token);
+      ($('#code') as HTMLInputElement).value = '';
+      start(data.role, data.roleLabel);
+    } catch (err: any) {
+      loginMsg.className = 'msg err'; loginMsg.textContent = err.message;
+    }
+  });
+
+  function signOut(message = '') {
+    if (dirty && message === '' && !confirm('You have unsaved changes. Sign out anyway?')) return;
+    sessionStorage.removeItem(TOKEN_KEY);
+    token = ''; role = null; dirty = false; current = null;
+    $('#panel').hidden = true; $('#save-bar').hidden = true; ($('.admin-who') as HTMLElement).hidden = true;
+    $('#login').hidden = false;
+    loginMsg.className = message ? 'msg err' : 'msg'; loginMsg.textContent = message;
+    $('#code').focus();
+  }
+  $('#sign-out').addEventListener('click', () => signOut());
+  window.addEventListener('beforeunload', (e) => { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
+
+  // ---------- tabs ----------
+  const TABS: { id: string; label: string; roles: Role[]; render: () => Promise<void> }[] = [
+    { id: 'events', label: 'Events', roles: ['developer', 'editor'], render: renderEvents },
+    { id: 'topics', label: 'Health topics', roles: ['developer', 'editor'], render: renderTopics },
+    { id: 'resources', label: 'Get Help resources', roles: ['developer', 'editor'], render: renderResources },
+    { id: 'settings', label: 'Site settings', roles: ['developer'], render: renderSettings },
+    { id: 'files', label: 'All files', roles: ['developer'], render: renderFiles },
+  ];
+
+  function start(r: Role, label: string) {
+    role = r;
+    $('#login').hidden = true; $('#panel').hidden = false; ($('.admin-who') as HTMLElement).hidden = false;
+    $('#role-badge').textContent = label;
+    const tabs = $('#tabs'); tabs.replaceChildren();
+    for (const t of TABS.filter((t) => t.roles.includes(r))) {
+      tabs.append(h('button', { type: 'button', 'data-tab': t.id, onclick: () => openTab(t.id) }, t.label));
+    }
+    openTab('events');
+  }
+
+  async function openTab(id: string) {
+    if (dirty && !confirm('You have unsaved changes. Leave without saving?')) return;
+    dirty = false; current = null;
+    document.querySelectorAll('#tabs button').forEach((b) => { if (b.getAttribute('data-tab') !== id) b.removeAttribute('aria-current'); else b.setAttribute('aria-current', 'page'); });
+    $('#save-bar').hidden = true; setSaveMsg('');
+    const view = $('#view'); view.replaceChildren(h('p', { class: 'loading' }, 'Loading…'));
+    try { await TABS.find((t) => t.id === id)!.render(); }
+    catch (e: any) { if (e.message !== 'signed out') view.replaceChildren(h('p', { class: 'msg err' }, e.message)); }
+  }
+
+  function show(title: string, hint: string, ...content: any[]) {
+    const view = $('#view');
+    view.replaceChildren(h('h2', {}, title), h('p', { class: 'hint' }, hint), ...content);
+    view.focus();
+  }
+
+  function useSave(fn: typeof current) {
+    current = fn; dirty = false;
+    $('#save-bar').hidden = false; ($('#save-note') as HTMLInputElement).value = ''; setSaveMsg('');
+  }
+
+  // ---------- saving ----------
+  function setSaveMsg(msg: string | Node, kind = '') { const el = $('#save-msg'); el.className = `msg ${kind}`; el.replaceChildren(msg); }
+  $('#save-btn').addEventListener('click', async () => {
+    if (!current) return;
+    const btn = $('#save-btn') as HTMLButtonElement;
+    btn.disabled = true; setSaveMsg('Saving…');
+    try {
+      const payload = current.save();
+      const res = await api(null, { action: 'save', note: ($('#save-note') as HTMLInputElement).value, ...payload });
+      current.onSaved?.(res.sha);
+      dirty = false; ($('#save-note') as HTMLInputElement).value = '';
+      setSaveMsg(h('span', {}, 'Saved! The live site updates in about 1–2 minutes. ', h('a', { href: res.commitUrl, target: '_blank', rel: 'noopener' }, 'See the change on GitHub')), 'ok');
+    } catch (e: any) {
+      if (e.message === 'signed out') return;
+      setSaveMsg(h('span', {}, e.message, e.details ? h('ul', {}, e.details.map((d: string) => h('li', {}, d))) : null), 'err');
+    } finally { btn.disabled = false; }
+  });
+
+  // ---------- Events ----------
+  async function renderEvents() {
+    const path = 'src/data/events.json';
+    const f = await api(`action=get&path=${encodeURIComponent(path)}`);
+    let sha = f.sha;
+    const list = h('div');
+    const rows: { get: () => any; el: HTMLElement }[] = [];
+
+    function addRow(ev: any = { title: '', date: '', time: '', location: '', description: '', todo: false }) {
+      const t = text(ev.title), d = text(ev.date, 'date'), tm = text(ev.time), loc = text(ev.location), desc = area(ev.description);
+      const todo = check('Details not final yet (shows "More details coming soon")', !!ev.todo);
+      const row: any = {};
+      const card = h('div', { class: 'card' },
+        h('div', { class: 'card-head' }, h('h3', {}, ev.title || 'New event'),
+          h('button', { type: 'button', class: 'btn-small danger', onclick: () => { if (confirm('Remove this event?')) { card.remove(); rows.splice(rows.indexOf(row), 1); dirty = true; } } }, 'Remove')),
+        h('div', { class: 'grid-2' }, field('Event name', t), field('Date', d)),
+        h('div', { class: 'grid-2' }, field('Time', tm, '(e.g. 9 a.m. – 1 p.m.)'), field('Location', loc)),
+        field('Description', desc), todo.el);
+      row.el = card;
+      row.get = () => ({ title: t.value, date: d.value, time: tm.value, location: loc.value, description: desc.value, todo: todo.box.checked });
+      rows.push(row); list.append(card);
+      return card;
+    }
+    f.data.events.forEach((ev: any) => addRow(ev));
+
+    show('Events', 'Add, change, or remove booth appearances and health fairs. Events whose date has passed move to "Past events" automatically.',
+      list,
+      h('button', { type: 'button', class: 'btn-small add', onclick: () => { const c = addRow(); dirty = true; c.querySelector('input')?.focus(); } }, '+ Add an event'));
+    useSave({
+      save: () => ({ path, sha, kind: 'json', data: { ...f.data, events: rows.map((r) => r.get()) } }),
+      onSaved: (s) => (sha = s),
+    });
+  }
+
+  // ---------- Topics ----------
+  async function renderTopics() {
+    const topics = await api('action=topics');
+    const picker = h('select', {}, h('option', { value: '' }, 'Choose a topic…'), ...topics.map((t: any) => h('option', { value: t.path }, t.title))) as HTMLSelectElement;
+    const area_ = h('div');
+    picker.addEventListener('change', async () => {
+      if (dirty && !confirm('You have unsaved changes. Switch topics anyway?')) return;
+      dirty = false; $('#save-bar').hidden = true; current = null;
+      if (!picker.value) return area_.replaceChildren();
+      area_.replaceChildren(h('p', { class: 'loading' }, 'Loading…'));
+      try { await renderTopicForm(picker.value, topics, area_); } catch (e: any) { area_.replaceChildren(h('p', { class: 'msg err' }, e.message)); }
+    });
+    show('Health topics', 'Pick a topic to edit its text, tips, and links. Put one item per line in the list boxes.', h('label', { class: 'field' }, h('span', {}, 'Topic'), picker), area_);
+  }
+
+  const ICONS = ['weight', 'gauge', 'candy', 'apple', 'hand-heart', 'droplet', 'brain', 'heart-pulse', 'egg'];
+
+  async function renderTopicForm(path: string, topics: any[], into: HTMLElement) {
+    const f = await api(`action=get&path=${encodeURIComponent(path)}`);
+    let sha = f.sha;
+    const d = f.data;
+    const slug = path.split('/').pop()!.replace('.md', '');
+
+    const title = text(d.title), hook = area(d.hook), desc = area(d.description);
+    const icon = h('select', {}, ...ICONS.map((i) => h('option', { value: i, ...(i === d.icon ? { selected: true } : {}) }, i))) as HTMLSelectElement;
+    const order = text(d.order, 'number');
+    const facts = lines(d.quickFacts), signsTitle = text(d.signsTitle || ''), signs = lines(d.signs), signsNote = area(d.signsNote);
+    const actions = lines(d.actions), doctorTitle = text(d.doctorTitle || ''), doctor = lines(d.doctor), emergency = area(d.emergency);
+    const bTag = text(d.bonus?.tag), bTitle = text(d.bonus?.title), bIntro = area(d.bonus?.intro), bItems = lines(d.bonus?.items);
+    const body = area(f.body, 'tall');
+
+    const linkBox = h('div');
+    const linkRows: (() => any)[] = [];
+    function addLink(l: any = {}) {
+      const org = text(l.org), t = text(l.title), u = text(l.url, 'url'), n = text(l.note);
+      const row = h('div', { class: 'link-row' }, field('Organization', org), field('Link title', t), field('Web address', u),
+        h('button', { type: 'button', class: 'btn-small danger', onclick: () => { row.remove(); linkRows.splice(linkRows.indexOf(get), 1); dirty = true; } }, 'Remove'),
+        h('div', { class: 'note-field' }, field('Short note', n)));
+      const get = () => ({ org: org.value, title: t.value, url: u.value, note: n.value });
+      linkRows.push(get); linkBox.append(row);
+    }
+    (d.links || []).forEach(addLink);
+
+    const related = topics.filter((t) => t.slug !== slug).map((t) => ({ slug: t.slug, ...check(t.title, (d.related || []).includes(t.slug)) }));
+
+    into.replaceChildren(
+      h('div', { class: 'card' }, h('h3', {}, 'Basics'),
+        h('div', { class: 'grid-2' }, field('Title', title), field('Icon', icon)),
+        field('One-line hook', hook, '(shows on the home page card)'), field('Description', desc, '(for Google and link previews)'),
+        role === 'developer' ? field('Order on home page', order) : null),
+      h('div', { class: 'card' }, h('h3', {}, 'Explainer'), field('Explainer text', body, '(Markdown: ## for headings, **bold**, - for bullets)')),
+      h('div', { class: 'card' }, h('h3', {}, 'Lists'),
+        field('Quick facts', facts, '(one per line, at least 2)'),
+        field('Signs section heading', signsTitle, '(leave blank for "Know the signs")'),
+        field('Signs', signs, '(one per line)'), field('Note under signs', signsNote),
+        field('What you can do today', actions, '(one per line, 3 to 5)'),
+        field('Doctor section heading', doctorTitle, '(leave blank for "When to see a doctor")'),
+        field('When to see a doctor', doctor, '(one per line)'),
+        field('Red emergency line', emergency, '(optional)')),
+      h('div', { class: 'card' }, h('h3', {}, 'Bonus box (optional)'),
+        h('p', { class: 'hint' }, 'Leave the title empty to hide the bonus box.'),
+        h('div', { class: 'grid-2' }, field('Small handwritten tag', bTag), field('Title', bTitle)),
+        field('Intro', bIntro), field('Items', bItems, '(one per line)')),
+      h('div', { class: 'card' }, h('h3', {}, 'Helpful links (3 to 6)'), h('p', { class: 'hint' }, 'Open each link to make sure it works before saving.'), linkBox,
+        h('button', { type: 'button', class: 'btn-small add', onclick: () => { addLink(); dirty = true; } }, '+ Add a link')),
+      h('div', { class: 'card' }, h('h3', {}, 'Related topics'), h('div', { class: 'checks' }, related.map((r) => r.el))),
+    );
+
+    useSave({
+      save: () => ({
+        path, sha, kind: 'topic', body: body.value,
+        data: {
+          title: title.value, order: Number(order.value), icon: icon.value, hook: hook.value, description: desc.value,
+          quickFacts: toLines(facts), signsTitle: signsTitle.value, signs: toLines(signs), signsNote: signsNote.value,
+          actions: toLines(actions), doctorTitle: doctorTitle.value, doctor: toLines(doctor), emergency: emergency.value,
+          bonus: { tag: bTag.value, title: bTitle.value, intro: bIntro.value, items: toLines(bItems) },
+          links: linkRows.map((g) => g()), related: related.filter((r) => r.box.checked).map((r) => r.slug),
+        },
+      }),
+      onSaved: (s) => (sha = s),
+    });
+  }
+
+  // ---------- Resources ----------
+  async function renderResources() {
+    const path = 'src/data/resources.json';
+    const f = await api(`action=get&path=${encodeURIComponent(path)}`);
+    let sha = f.sha;
+    const groups = h('div');
+    const getters: (() => any)[] = [];
+
+    for (const g of f.data.groups) {
+      const gTitle = text(g.title);
+      const items = h('div');
+      const itemGetters: (() => any)[] = [];
+      const addItem = (r: any = {}) => {
+        const name = text(r.name), desc = area(r.desc), addr = text(r.address);
+        const phones = area((r.phones || []).map((p: any) => `${p.label} | ${p.tel}${p.sms ? ' | text' : ''}`).join('\n'));
+        const url = text(r.url, 'url'), urlLabel = text(r.urlLabel), xUrl = text(r.extra?.url, 'url'), xLabel = text(r.extra?.label);
+        const card = h('div', { class: 'card' },
+          h('div', { class: 'card-head' }, h('h3', {}, r.name || 'New resource'),
+            h('button', { type: 'button', class: 'btn-small danger', onclick: () => { if (confirm('Remove this resource?')) { card.remove(); itemGetters.splice(itemGetters.indexOf(get), 1); dirty = true; } } }, 'Remove')),
+          field('Name', name), field('Description', desc), field('Address', addr, '(optional)'),
+          field('Phone numbers', phones, '(one per line: what to show | digits to dial, e.g. "(325) 670-2000 | 13256702000". Add "| text" if it takes texts.)'),
+          h('div', { class: 'grid-2' }, field('Website', url), field('Website link text', urlLabel)),
+          h('div', { class: 'grid-2' }, field('Second link (optional)', xUrl), field('Second link text', xLabel)));
+        const get = () => {
+          const out: any = { name: name.value.trim(), desc: desc.value.trim() };
+          if (addr.value.trim()) out.address = addr.value.trim();
+          const ph = toLines(phones).map((line) => { const [label, tel, sms] = line.split('|').map((s) => s.trim()); return { label, tel: (tel || '').replace(/\D/g, ''), ...(sms && /text/i.test(sms) ? { sms: (tel || '').replace(/\D/g, '') } : {}) }; });
+          if (ph.length) out.phones = ph;
+          if (url.value.trim()) { out.url = url.value.trim(); out.urlLabel = urlLabel.value.trim() || url.value.trim(); }
+          if (xUrl.value.trim()) out.extra = { url: xUrl.value.trim(), label: xLabel.value.trim() || xUrl.value.trim() };
+          return out;
+        };
+        itemGetters.push(get); items.append(card);
+        return card;
+      };
+      (g.items || []).forEach(addItem);
+      groups.append(h('section', { class: 'card', style: 'background:var(--gold-soft)' },
+        field('Section title', gTitle), items,
+        h('button', { type: 'button', class: 'btn-small add', onclick: () => { addItem(); dirty = true; } }, '+ Add a resource here')));
+      getters.push(() => ({ id: g.id, title: gTitle.value, items: itemGetters.map((x) => x()) }));
+    }
+
+    show('Get Help resources', 'Only add places you have checked on their official website. Double-check phone numbers.', groups);
+    useSave({ save: () => ({ path, sha, kind: 'json', data: { ...f.data, groups: getters.map((g) => g()) } }), onSaved: (s) => (sha = s) });
+  }
+
+  // ---------- Site settings (developer) ----------
+  async function renderSettings() {
+    const path = 'src/data/site.json';
+    const f = await api(`action=get&path=${encodeURIComponent(path)}`);
+    let sha = f.sha;
+    const inputs: Record<string, HTMLInputElement> = {};
+    const labels: Record<string, string> = { name: 'Site name', shortName: 'Short name', team: 'Team', year: 'School year', instagramUrl: 'Instagram link', description: 'Site description' };
+    const fields = Object.keys(f.data).map((k) => { inputs[k] = text(f.data[k]); return field(labels[k] || k, inputs[k]); });
+    show('Site settings', 'Site-wide details, like the Instagram link in the footer (use the full https:// address).', h('div', { class: 'card' }, fields));
+    useSave({ save: () => ({ path, sha, kind: 'json', data: Object.fromEntries(Object.entries(inputs).map(([k, el]) => [k, el.value])) }), onSaved: (s) => (sha = s) });
+  }
+
+  // ---------- All files (developer) ----------
+  async function renderFiles() {
+    const paths: string[] = await api('action=tree');
+    const filter = text('');
+    filter.placeholder = 'Filter files…';
+    const list = h('ul', { class: 'file-list' });
+    const editor = h('div');
+    const draw = () => list.replaceChildren(...paths.filter((p) => p.toLowerCase().includes(filter.value.toLowerCase())).map((p) => h('li', {}, h('button', { type: 'button', onclick: () => openFile(p) }, p))));
+    filter.addEventListener('input', draw); draw();
+
+    const newPath = text('');
+    newPath.placeholder = 'e.g. src/data/new-file.json';
+
+    async function openFile(p: string, isNew = false) {
+      if (dirty && !confirm('You have unsaved changes. Open another file anyway?')) return;
+      editor.replaceChildren(h('p', { class: 'loading' }, 'Loading…'));
+      let sha: string | null = null, content = '';
+      if (!isNew) { const f = await api(`action=get&raw=1&path=${encodeURIComponent(p)}`); sha = f.sha; content = f.content; }
+      const ta = h('textarea', { class: 'raw-editor', spellcheck: 'false', value: content }) as HTMLTextAreaElement;
+      ta.addEventListener('input', () => (dirty = true));
+      editor.replaceChildren(h('h3', { style: 'font-family:ui-monospace,Menlo,monospace;font-size:1rem;margin-top:1.25rem' }, isNew ? `New file: ${p}` : p),
+        h('label', { class: 'visually-hidden', for: 'raw-ed' }, `Contents of ${p}`), Object.assign(ta, { id: 'raw-ed' }));
+      useSave({ save: () => ({ path: p, sha, kind: 'text', content: ta.value }), onSaved: (s) => (sha = s) });
+      ta.focus();
+    }
+
+    show('All files', 'Developer only: edit any text file in the project. A mistake here can break the site build. If a build fails, Netlify keeps the last working version live.',
+      field('Find a file', filter), list,
+      h('div', { class: 'card', style: 'margin-top:1rem' }, field('Create a new file', newPath),
+        h('button', { type: 'button', class: 'btn-small add', onclick: () => newPath.value.trim() && openFile(newPath.value.trim(), true) }, 'Create')),
+      editor);
+  }
+
+  // ---------- resume session ----------
+  (async () => {
+    token = sessionStorage.getItem(TOKEN_KEY) || '';
+    if (!token) return $('#code').focus();
+    try { const me = await api('action=me'); start(me.role, me.roleLabel); } catch { /* shows login */ }
+  })();
+</script>

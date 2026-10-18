@@ -97,6 +97,29 @@ Edit [`src/data/events.json`](src/data/events.json) and add an entry:
 
 ---
 
+## Admin panel (edit without coding)
+
+Go to **chshealthcare.org/admin** and enter a 10-digit access code. The page isn't linked anywhere on the site, and search engines are told to skip it.
+
+| Who | Can edit |
+| --- | --- |
+| **Lead students / teacher** | Events, the 9 health topics, Get Help resources |
+| **Developer** | Everything above, plus site settings (like the Instagram link) and any file in the project |
+
+- Codes are given out in person. **Never** put a code in this repo, a chat, or a screenshot.
+- After 5 wrong codes, that device is locked out for 15 minutes.
+- **Save & publish** commits the change to GitHub, and the live site updates in about 1–2 minutes. Every change shows up in the GitHub history, so it can be undone.
+- If a save would break a page (a missing title, a bad link, or a date in the wrong format), the panel says what to fix instead of saving.
+- If you also edit on your computer, run `git pull` first so you have the latest admin changes.
+
+**How it works:** `netlify/functions/admin-login.mjs` checks the code against scrambled (hashed) versions stored in Netlify's environment variables. `netlify/functions/admin-api.mjs` reads and saves files through GitHub. Netlify needs these environment variables (Project configuration → Environment variables):
+
+| Variable | What it is |
+| --- | --- |
+| `ADMIN_DEV_CODE_HASH`, `ADMIN_EDITOR_CODE_HASH`, `ADMIN_CODE_SALT` | Hashed access codes. To change a code, see `scripts/hash-admin-code.mjs`. |
+| `ADMIN_SESSION_SECRET` | Random key that signs sign-in sessions. Changing it signs everyone out. |
+| `ADMIN_GITHUB_TOKEN` | A fine-grained GitHub token with **Contents: Read and write** on this repo only. Renew it before it expires. |
+
 ## Photos
 
 The raw iPhone photos (HEIC) are **not** stored in the repo. Converted versions live in `public/images/` at 800px and 1600px wide, in both WebP and JPG.
