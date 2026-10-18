@@ -7,6 +7,7 @@ It gives Clyde and Abilene families short, plain-language info on 9 health topic
 - **Built with:** [Astro](https://astro.build) (static site), plain CSS, Markdown content
 - **Live content:** a Netlify Function that calls [MyHealthfinder](https://odphp.health.gov/myhealthfinder) (health.gov) and [MedlinePlus](https://medlineplus.gov) (National Library of Medicine). No API keys are needed.
 - **Hosting:** Netlify. Every push to `main` deploys automatically.
+- **Live site:** <https://clyde-cmps-health.netlify.app> · **Netlify dashboard:** <https://app.netlify.com/projects/clyde-cmps-health>
 
 ---
 
