@@ -1,0 +1,111 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Stripes from '../components/Stripes.astro';
+import Picture from '../components/Picture.astro';
+import Icon from '../components/Icon.astro';
+---
+<BaseLayout title="About Us" description="Meet the Clyde High School Community Problem Solving team and learn why we chose health awareness for our 2026–27 project.">
+  <section class="page-hero on-dark">
+    <Stripes variant="corner" />
+    <div class="wrap">
+      <p class="eyebrow" style="color:var(--gold)">Clyde High School CmPS · 2026–27</p>
+      <h1>About <span class="script">us</span></h1>
+      <p class="lead">We're students on the Clyde High School Community Problem Solving (CmPS) team in Clyde, Texas.</p>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="why-title">
+    <div class="wrap about-grid">
+      <div class="prose">
+        <h2 id="why-title">Why we chose health</h2>
+        <p>
+          When we began discussing what to work on this school year, we realized many of us had health issues in our families:
+          high blood pressure, cancer, a family member on the transplant list, heart attacks. These were very different events,
+          but they were all health related, and we wondered if we could encourage our community to think about their health.
+        </p>
+
+        <h2>Our underlying problem</h2>
+        <blockquote class="problem">
+          In 2026–2027, when we noticed the lack of education surrounding various health issues within our community, what can we,
+          the Clyde High School Community Problem Solving Team, do to promote health awareness to improve our community's education
+          of common health challenges, ultimately resulting in the improvement of the overall quality of life of our citizens?
+        </blockquote>
+
+        <h2>Who we are</h2>
+        <p>
+          Community Problem Solving (CmPS) is a program where students find a real problem in their own community and work to fix it.
+          Our 2026–27 team is made up of Clyde High students who care about this town and the people in it.
+        </p>
+        <p>
+          We started by asking the community. At our health fair booth in September 2026, we surveyed 50 neighbors.
+          Most said our community isn't educated on health concerns, and almost everyone said more education would help.
+          <a href="/survey/">See what they told us.</a>
+        </p>
+
+        <h2>What we're doing</h2>
+        <ul>
+          <li>Running booths at local events with free health flyers and info.</li>
+          <li>Building this website so anyone can learn the basics on a phone in a few minutes.</li>
+          <li>Connecting people with local help, like blood donation, organ donor sign-up, and CPR classes.</li>
+          <li>Planning a community health fair for Clyde. <a href="/events/">See our events.</a></li>
+        </ul>
+        <p class="note">
+          We're students, not doctors. Everything on this site is for learning only. Please talk to your doctor about your own health.
+        </p>
+      </div>
+
+      <div class="about-photos">
+        <figure>
+          <Picture
+            name="banner-closeup"
+            sizes="(min-width: 900px) 30vw, 100vw"
+            alt="Close-up of our hand-painted kraft paper banner. 'Clyde' is painted in gold script and 'CmPS' in black letters, with black, gold, and white brush strokes."
+          />
+          <figcaption>Our hand-painted booth banner.</figcaption>
+        </figure>
+        {/* TODO: Confirm photo permission with our sponsor (and every student shown) before launch.
+             If permission isn't confirmed, delete the two <figure> blocks below. */}
+        <figure>
+          <Picture
+            name="team-at-table"
+            sizes="(min-width: 900px) 30vw, 100vw"
+            alt="Three CmPS team members smiling behind our booth table, which is covered in health flyers, with the Clyde CmPS banner hanging in front."
+          />
+          <figcaption>Team members at our health fair booth.</figcaption>
+        </figure>
+        <figure>
+          <Picture
+            name="team-handing-out"
+            sizes="(min-width: 900px) 30vw, 100vw"
+            alt="Two CmPS team members at the booth handing out small treats from a basket, with flyers on the table and a Bulldog Band trailer in the background."
+          />
+          <figcaption>Handing out goodies (and health info!) at the booth.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <Stripes />
+
+  <section class="section section--paper">
+    <div class="wrap" style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;justify-content:space-between">
+      <h2 style="margin:0">Start learning</h2>
+      <a class="btn btn--black" href="/#topics">See all 9 health topics <Icon name="arrow-right" size={20} /></a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .about-grid { display: grid; gap: 2.5rem; }
+  @media (min-width: 900px) { .about-grid { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); align-items: start; } }
+  .problem {
+    margin: 0 0 1.5rem; padding: 1.25rem 1.25rem 1.25rem 1.5rem;
+    background: var(--gold-soft); border-left: 8px solid var(--black); border-radius: var(--radius-sm);
+    font-size: 1.15rem; font-style: italic; line-height: 1.55;
+  }
+  .about-photos { display: grid; gap: 1.5rem; }
+  @media (min-width: 560px) and (max-width: 899px) { .about-photos { grid-template-columns: repeat(2, 1fr); } }
+  .about-photos figure { margin: 0; }
+  .about-photos img { border-radius: var(--radius); border: 3px solid var(--black); aspect-ratio: 3 / 4; object-fit: cover; width: 100%; }
+  .about-photos figcaption { font-family: var(--font-script); font-size: 1.4rem; line-height: 1.2; margin-top: 0.35rem; }
+</style>

@@ -1,0 +1,29 @@
+{
+  "_howto": "Add one object per event. date = YYYY-MM-DD. Events before today move to 'Past events' automatically on the next deploy. Set \"todo\": true to show a 'details coming soon' note; remove it when details are confirmed.",
+  "events": [
+    {
+      "title": "Health Fair Booth",
+      "date": "2026-09-19",
+      "time": "TODO: time",
+      "location": "TODO: location",
+      "description": "Our first booth! We shared health flyers and ran our community health survey by QR code. TODO: confirm exact date.",
+      "todo": true
+    },
+    {
+      "title": "CmPS Booth at a Clyde Bulldogs Event",
+      "date": "2026-11-07",
+      "time": "TODO: time",
+      "location": "TODO: location, Clyde, TX",
+      "description": "Stop by for free health info, blood pressure tips, and a quick quiz. TODO: confirm event and date.",
+      "todo": true
+    },
+    {
+      "title": "Community Health Fair",
+      "date": "2027-02-20",
+      "time": "TODO: time",
+      "location": "TODO: location, Clyde, TX",
+      "description": "Our big health fair with local health partners. Bring the whole family. TODO: confirm date, partners, and location.",
+      "todo": true
+    }
+  ]
+}

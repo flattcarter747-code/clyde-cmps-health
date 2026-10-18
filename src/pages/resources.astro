@@ -1,0 +1,95 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Stripes from '../components/Stripes.astro';
+import Icon from '../components/Icon.astro';
+import data from '../data/resources.json';
+// Unverified resources are listed as TODOs in src/data/resources.json ("_todo") and are NOT shown here.
+
+const mapUrl = (address: string) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+---
+<BaseLayout title="Get Help Near Clyde" description="Local and Texas health resources near Clyde and Abilene: crisis help, hospitals, clinics, blood donation, organ donor sign-up, and CPR classes.">
+  <section class="page-hero on-dark">
+    <Stripes variant="corner" />
+    <div class="wrap">
+      <p class="eyebrow" style="color:var(--gold)">Local and Texas resources</p>
+      <h1>Get help near <span class="script">Clyde</span></h1>
+      <p class="lead">Places in Clyde, Abilene, and across Texas where you can get care, give back, and learn new skills.</p>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="emergency-title">
+    <div class="wrap">
+      <div class="emergency-band">
+        <h2 id="emergency-title">Emergency? Call 911.</h2>
+        <p>For chest pain, trouble breathing, signs of a stroke, someone who collapses, or any life-threatening emergency, call 911 right away.</p>
+        <a class="btn btn--white" href="tel:911"><Icon name="phone" size={20} /> Call 911</a>
+      </div>
+
+      <nav class="jump" aria-label="Jump to a section">
+        <ul>
+          {data.groups.map((g) => <li><a class="chip" style="padding-left:1rem" href={`#${g.id}`}>{g.title}</a></li>)}
+        </ul>
+      </nav>
+
+      {data.groups.map((g) => (
+        <section class="res-group" id={g.id} aria-labelledby={`${g.id}-title`}>
+          <h2 id={`${g.id}-title`}>{g.title}</h2>
+          <ul class="res-list">
+            {g.items.map((r: any) => (
+              <li class="res-card">
+                <h3>{r.name}</h3>
+                <p>{r.desc}</p>
+                {r.address && (
+                  <p class="res-line">
+                    <Icon name="map-pin" size={20} />
+                    <a href={mapUrl(r.address)} target="_blank" rel="noopener noreferrer">{r.address}<span class="visually-hidden"> (map, opens in a new tab)</span></a>
+                  </p>
+                )}
+                {r.phones?.map((p: any) => (
+                  <p class="res-line">
+                    <Icon name="phone" size={20} />
+                    <a href={`tel:${p.tel}`}>{p.label}</a>
+                    {p.sms && <> · <a href={`sms:${p.sms}`}>Text</a></>}
+                  </p>
+                ))}
+                {r.url && (
+                  <p class="res-line">
+                    <Icon name="external-link" size={20} />
+                    <a href={r.url} target="_blank" rel="noopener noreferrer">{r.urlLabel}<span class="visually-hidden"> (opens in a new tab)</span></a>
+                  </p>
+                )}
+                {r.extra && (
+                  <p class="res-line">
+                    <Icon name="external-link" size={20} />
+                    <a href={r.extra.url} target="_blank" rel="noopener noreferrer">{r.extra.label}<span class="visually-hidden"> (opens in a new tab)</span></a>
+                  </p>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+
+      <p class="note">Information checked October 2026. Hours and services can change, so please call ahead. Know a resource we should add? Tell us at our booth or on Instagram.</p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .emergency-band { background: var(--danger); color: var(--white); border-radius: var(--radius); padding: 1.25rem 1.25rem 1.4rem; margin-bottom: 2rem; border: 3px solid var(--black); }
+  .emergency-band h2 { margin-bottom: 0.3rem; }
+  .emergency-band p { max-width: 44rem; }
+  .emergency-band .btn:hover { box-shadow: 4px 4px 0 var(--black); }
+  .jump ul { list-style: none; display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0; margin: 0 0 2rem; }
+  .jump li { margin: 0; }
+  .res-group { margin-bottom: 2.5rem; scroll-margin-top: 5rem; }
+  .res-group > h2 { display: flex; align-items: center; gap: 0.6rem; }
+  .res-group > h2::before { content: ''; flex: none; width: 0.9rem; height: 1.6rem; background: var(--gold); border: 2px solid var(--black); transform: skewX(-18deg); }
+  .res-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 1rem; }
+  @media (min-width: 760px) { .res-list { grid-template-columns: repeat(2, 1fr); } }
+  .res-card { margin: 0; padding: 1.1rem 1.15rem 0.6rem; border: 2px solid var(--black); border-radius: var(--radius); background: var(--white); }
+  .res-card h3 { font-size: 1.3rem; margin-bottom: 0.35rem; }
+  .res-card > p { margin: 0 0 0.6rem; }
+  .res-line { display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem; min-height: 44px; font-weight: 600; }
+  .res-line .icon { flex: none; color: var(--gold-ink); }
+</style>

@@ -1,0 +1,156 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Icon from '../../components/Icon.astro';
+import Stripes from '../../components/Stripes.astro';
+import LiveContent from '../../components/LiveContent.astro';
+
+export async function getStaticPaths() {
+  const topics = await getCollection('topics');
+  return topics.map((topic) => ({ params: { slug: topic.id }, props: { topic, all: topics } }));
+}
+
+const { topic, all } = Astro.props;
+const d = topic.data;
+const { Content } = await render(topic);
+const related = d.related
+  .map((slug) => all.find((t) => t.id === slug))
+  .filter((t): t is (typeof all)[number] => Boolean(t));
+const pageUrl = new URL(`/topics/${topic.id}/`, Astro.site);
+
+const toc = [
+  { id: 'learn', label: 'The basics' },
+  { id: 'facts', label: 'Quick facts' },
+  { id: 'signs', label: d.signsTitle },
+  { id: 'today', label: 'What you can do today' },
+  ...(d.bonus ? [{ id: 'bonus', label: d.bonus.title }] : []),
+  { id: 'doctor', label: d.doctorTitle },
+  { id: 'live', label: 'From trusted health sites' },
+  { id: 'links', label: 'Helpful links' },
+];
+---
+<BaseLayout title={d.title} description={d.description}>
+  <section class="topic-hero on-dark">
+    <Stripes variant="corner" />
+    <div class="wrap">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <ol>
+          <li><a href="/">Home</a></li>
+          <li><a href="/#topics">Health topics</a></li>
+          <li aria-current="page">{d.title}</li>
+        </ol>
+      </nav>
+      <div class="topic-title">
+        <span class="topic-icon"><Icon name={d.icon} size={34} /></span>
+        <h1>{d.title}</h1>
+      </div>
+      <p class="lead">{d.hook}</p>
+      <div class="topic-tools">
+        <button class="btn btn--gold" type="button" data-print><Icon name="printer" size={20} /> Print this page</button>
+        <a class="btn btn--ghost-light" href="#today">Jump to tips</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="section">
+    <div class="wrap topic-layout">
+      <div>
+        <section class="topic-block prose" id="learn" aria-label="The basics">
+          <Content />
+        </section>
+
+        <section class="topic-block" id="facts" aria-labelledby="facts-title">
+          <h2 id="facts-title">Quick facts</h2>
+          <ul class="facts">
+            {d.quickFacts.map((f) => <li>{f}</li>)}
+          </ul>
+        </section>
+
+        <section class="topic-block" id="signs" aria-labelledby="signs-title">
+          <h2 id="signs-title">{d.signsTitle}</h2>
+          <ul class="signs">
+            {d.signs.map((s) => <li>{s}</li>)}
+          </ul>
+          {d.signsNote && <p class="note">{d.signsNote}</p>}
+        </section>
+
+        <section class="topic-block" id="today" aria-labelledby="today-title">
+          <h2 id="today-title">What you can do today</h2>
+          <ol class="actions">
+            {d.actions.map((a) => <li><span>{a}</span></li>)}
+          </ol>
+        </section>
+
+        {d.bonus && (
+          <section class="topic-block bonus-box" id="bonus" aria-labelledby="bonus-title">
+            {d.bonus.tag && <span class="tag">{d.bonus.tag}</span>}
+            <h2 id="bonus-title">{d.bonus.title}</h2>
+            {d.bonus.intro && <p>{d.bonus.intro}</p>}
+            <ul>{d.bonus.items.map((i) => <li>{i}</li>)}</ul>
+          </section>
+        )}
+
+        <section class="topic-block doctor-box" id="doctor" aria-labelledby="doctor-title">
+          <h2 id="doctor-title">{d.doctorTitle}</h2>
+          <ul>
+            {d.doctor.map((x) => <li>{x}</li>)}
+          </ul>
+          {d.emergency && (
+            <p class="emergency"><Icon name="phone" size={22} /> <span>{d.emergency}</span></p>
+          )}
+        </section>
+
+        <LiveContent slug={topic.id} title={d.title} />
+
+        <section class="topic-block" id="links" aria-labelledby="links-title">
+          <h2 id="links-title">Helpful links</h2>
+          <p class="note" style="margin-top:0">Hand-picked pages from trusted health organizations.</p>
+          <ul class="link-list">
+            {d.links.map((l) => (
+              <li>
+                <a class="link-card" href={l.url} target="_blank" rel="noopener noreferrer">
+                  <span>
+                    <span class="org">{l.org}</span>
+                    <span class="title">{l.title}</span>
+                    {l.note && <span class="desc">{l.note}</span>}
+                  </span>
+                  <Icon name="external-link" size={20} />
+                  <span class="visually-hidden">(opens in a new tab)</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        {related.length > 0 && (
+          <section class="topic-block related-block" aria-labelledby="related-title">
+            <h2 id="related-title">Related topics</h2>
+            <ul class="related">
+              {related.map((r) => (
+                <li>
+                  <a class="chip" href={`/topics/${r.id}/`}>
+                    <span class="topic-icon"><Icon name={r.data.icon} size={18} /></span>
+                    {r.data.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        <p class="print-only">Printed from {pageUrl.href} · Know Your Health, Clyde · Clyde High School CmPS 2026–27</p>
+      </div>
+
+      <aside class="toc" aria-labelledby="toc-title">
+        <h2 id="toc-title">On this page</h2>
+        <ul>
+          {toc.map((t) => <li><a href={`#${t.id}`}>{t.label}</a></li>)}
+        </ul>
+      </aside>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-print]').forEach((b) => b.addEventListener('click', () => window.print()));
+</script>

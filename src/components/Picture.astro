@@ -1,0 +1,27 @@
+---
+// Responsive photo: WebP with JPG fallback at 800px and 1600px widths (made by `npm run images`).
+// Usage: <Picture name="booth-wide" alt="..." sizes="(min-width: 900px) 50vw, 100vw" />
+interface Props {
+  name: string;
+  alt: string;
+  sizes?: string;
+  eager?: boolean;
+  class?: string;
+}
+const { name, alt, sizes = '100vw', eager = false, class: className } = Astro.props;
+const src = (w: number, ext: string) => `/images/${name}-${w}.${ext}`;
+---
+<picture class={className}>
+  <source type="image/webp" srcset={`${src(800, 'webp')} 800w, ${src(1600, 'webp')} 1600w`} sizes={sizes} />
+  <img
+    src={src(800, 'jpg')}
+    srcset={`${src(800, 'jpg')} 800w, ${src(1600, 'jpg')} 1600w`}
+    sizes={sizes}
+    alt={alt}
+    width="800"
+    height="1067"
+    loading={eager ? 'eager' : 'lazy'}
+    fetchpriority={eager ? 'high' : undefined}
+    decoding="async"
+  />
+</picture>

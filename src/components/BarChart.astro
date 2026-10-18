@@ -1,0 +1,21 @@
+---
+// Simple horizontal bar chart in plain HTML/CSS. Labels and numbers are real text.
+interface Result { label: string; count: number }
+interface Props { results: Result[]; total: number; question: string }
+const { results, total, question } = Astro.props;
+const max = Math.max(...results.map((r) => r.count));
+---
+<ul class="bars" aria-label={question}>
+  {results.map((r) => {
+    const pct = Math.round((r.count / total) * 100);
+    return (
+      <li>
+        <span class="bar-label">{r.label}</span>
+        <span class="bar-track" aria-hidden="true">
+          <span class="bar-fill" style={`width:${(r.count / max) * 100}%`} title={`${r.label}: ${r.count} (${pct}%)`}></span>
+        </span>
+        <span class="bar-value">{r.count} <span class="muted">({pct}%)</span></span>
+      </li>
+    );
+  })}
+</ul>

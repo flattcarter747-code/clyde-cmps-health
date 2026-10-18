@@ -1,0 +1,19 @@
+node_modules/
+dist/
+.astro/
+.netlify/
+.env
+.env.*
+.DS_Store
+npm-debug.log*
+
+# Raw source files (HEIC photos, survey spreadsheet with personal info).
+# NEVER commit the raw survey CSV — it has names and emails.
+CmPS Assets*/
+*.HEIC
+*.heic
+*.csv
+
+# Local editor/assistant settings
+.claude/
+.impeccable/

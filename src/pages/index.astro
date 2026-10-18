@@ -1,0 +1,109 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import Stripes from '../components/Stripes.astro';
+import Picture from '../components/Picture.astro';
+import survey from '../data/survey.json';
+
+const topics = (await getCollection('topics')).sort((a, b) => a.data.order - b.data.order);
+
+const pct = (id: string, label: string) => {
+  const q = survey.questions.find((q) => q.id === id)!;
+  const r = q.results.find((r) => r.label === label)!;
+  return Math.round((r.count / survey.total) * 100);
+};
+---
+<BaseLayout description="Know Your Health, Clyde: plain-language info on 9 common health topics, local help near Clyde and Abilene, and our community survey results.">
+  <section class="hero on-dark" aria-labelledby="hero-title">
+    <Stripes variant="corner" />
+    <div class="wrap">
+      <div>
+        <p class="eyebrow" style="color:var(--gold)">Clyde High School CmPS · 2026–27</p>
+        <h1 id="hero-title">Know your health, <span class="script">Clyde</span></h1>
+        <p class="lead">
+          We're the Clyde High Community Problem Solving team. Many of us have watched family members
+          deal with high blood pressure, cancer, heart attacks, and waiting for a transplant. We built this
+          site so every family in Clyde can learn the basics, ask better questions, and find help close to home.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn--gold" href="#topics">Explore 9 health topics <Icon name="arrow-right" size={20} /></a>
+          <a class="btn btn--ghost-light" href="/resources/">Get help near Clyde</a>
+        </div>
+      </div>
+      <figure class="hero-photo">
+        <Picture
+          name="booth-wide"
+          eager
+          sizes="(min-width: 860px) 40vw, 100vw"
+          alt="Our CmPS booth at the health fair: a white canopy over a table covered in health flyers, with a hand-painted kraft paper banner that reads Clyde CmPS in gold and black."
+        />
+        <figcaption>Come see us at the booth!</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="stats section" aria-labelledby="stats-title">
+    <div class="wrap">
+      <div class="stats-head">
+        <p class="eyebrow">What Clyde told us</p>
+        <h2 id="stats-title">We asked {survey.total} neighbors. Here's what they said.</h2>
+      </div>
+      <ul class="stats-grid">
+        <li class="stat">
+          <span class="stat-num">{pct('community-educated', 'No')}%</span>
+          <span class="stat-label">said our community <strong>isn't</strong> educated on health concerns</span>
+        </li>
+        <li class="stat">
+          <span class="stat-num">{pct('would-benefit', 'Yes')}%</span>
+          <span class="stat-label">said more health education <strong>would help</strong> our community</span>
+        </li>
+        <li class="stat">
+          <span class="stat-num">{pct('checkup', 'More than a year ago')}%</span>
+          <span class="stat-label">hadn't had a wellness checkup in <strong>more than a year</strong></span>
+        </li>
+      </ul>
+      <p style="margin-top:1.25rem"><a href="/survey/" style="font-weight:700">See all our survey results</a></p>
+    </div>
+  </section>
+
+  <section id="topics" class="section" aria-labelledby="topics-title">
+    <div class="wrap">
+      <p class="eyebrow">Pick a topic</p>
+      <h2 id="topics-title">9 things worth knowing</h2>
+      <p class="lead" style="max-width:40rem">These are the topics our community asked about most. Each one is short, written in plain English, and links to trusted health sites.</p>
+      <ul class="topic-grid">
+        {topics.map((t) => (
+          <li>
+            <a class="topic-card" href={`/topics/${t.id}/`}>
+              <span class="topic-icon"><Icon name={t.data.icon} size={28} /></span>
+              <div>
+                <h3>{t.data.title}</h3>
+                <p>{t.data.hook}</p>
+                <span class="more" aria-hidden="true">Learn more <Icon name="arrow-right" size={16} /></span>
+              </div>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <Stripes />
+
+  <section class="section section--paper" aria-labelledby="help-title">
+    <div class="wrap">
+      <div class="help-callout">
+        <Stripes variant="corner" />
+        <p class="eyebrow">Close to home</p>
+        <h2 id="help-title">Get help near <span class="script">Clyde</span></h2>
+        <ul class="help-list">
+          <li><strong>911</strong>Emergency? Call <a href="tel:911">911</a> right away.</li>
+          <li><strong>988</strong>Struggling or in crisis? <a href="tel:988">Call</a> or <a href="sms:988">text</a> 988, any time.</li>
+          <li><strong>Local help</strong>Blood donation, organ donor sign-up, CPR classes, and clinics.</li>
+        </ul>
+        <a class="btn btn--black" href="/resources/">See local resources <Icon name="arrow-right" size={20} /></a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

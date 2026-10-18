@@ -1,0 +1,26 @@
+{
+  "name": "clyde-cmps-health",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Know Your Health, Clyde — a Clyde High School Community Problem Solving health awareness project",
+  "engines": {
+    "node": ">=22.22"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "images": "node scripts/convert-images.mjs",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@fontsource-variable/oswald": "^5.3.0",
+    "@fontsource-variable/source-sans-3": "^5.3.1",
+    "@fontsource/caveat": "^5.3.0",
+    "astro": "^7.4.0"
+  },
+  "devDependencies": {
+    "sharp": "^0.35.5"
+  }
+}

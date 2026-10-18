@@ -1,0 +1,42 @@
+---
+// Accessible donut chart in pure SVG. Every slice is also labeled in text (legend below),
+// so color is never the only way to tell answers apart.
+interface Result { label: string; count: number }
+interface Props { results: Result[]; total: number; question: string }
+const { results, total, question } = Astro.props;
+
+const COLORS = ['#c5b358', '#111111', '#c9a27a', '#6e5f1a'];
+const R = 40;
+const C = 2 * Math.PI * R;
+const GAP = results.filter((r) => r.count > 0).length > 1 ? 1.2 : 0; // small white gap between slices
+let offset = 0;
+const slices = results.map((r, i) => {
+  const len = (r.count / total) * C;
+  const s = { ...r, color: COLORS[i % COLORS.length], dash: Math.max(len - GAP, 0.01), offset, pct: Math.round((r.count / total) * 100) };
+  offset += len;
+  return s;
+});
+const top = slices[0];
+const summary = `${question} ` + slices.map((s) => `${s.label}: ${s.count} (${s.pct}%)`).join(', ');
+---
+<div class="donut">
+  <svg viewBox="0 0 100 100" role="img" aria-label={summary}>
+    <circle cx="50" cy="50" r={R} fill="none" stroke="#efe8dc" stroke-width="16" />
+    {slices.map((s) => (
+      <circle
+        cx="50" cy="50" r={R} fill="none"
+        stroke={s.color} stroke-width="16"
+        stroke-dasharray={`${s.dash} ${C - s.dash}`}
+        stroke-dashoffset={-s.offset}
+        transform="rotate(-90 50 50)"
+      ><title>{`${s.label}: ${s.count} of ${total} (${s.pct}%)`}</title></circle>
+    ))}
+    <text x="50" y="50" text-anchor="middle" class="donut-num" aria-hidden="true">{top.pct}%</text>
+    <text x="50" y="63" text-anchor="middle" class="donut-sub" aria-hidden="true">{top.label}</text>
+  </svg>
+  <ul class="legend">
+    {slices.map((s) => (
+      <li><span class="swatch" style={`background:${s.color}`}></span><strong>{s.label}</strong> <span>{s.count} people ({s.pct}%)</span></li>
+    ))}
+  </ul>
+</div>

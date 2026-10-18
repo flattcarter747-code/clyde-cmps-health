@@ -1,0 +1,84 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Stripes from '../components/Stripes.astro';
+import Icon from '../components/Icon.astro';
+import data from '../data/events.json';
+
+// Note: "today" is the day the site was last built/deployed.
+const today = new Date().toISOString().slice(0, 10);
+const events = [...data.events].sort((a, b) => a.date.localeCompare(b.date));
+const upcoming = events.filter((e) => e.date >= today);
+const past = events.filter((e) => e.date < today).reverse();
+
+const fmt = (d: string) =>
+  new Date(`${d}T12:00:00`).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+const clean = (s?: string) => (s && !s.startsWith('TODO') ? s : null);
+---
+<BaseLayout title="Events" description="Where to find the Clyde High CmPS health booth and our upcoming community health fair.">
+  <section class="page-hero on-dark">
+    <Stripes variant="corner" />
+    <div class="wrap">
+      <p class="eyebrow" style="color:var(--gold)">Come say hi</p>
+      <h1>Events</h1>
+      <p class="lead">Find our booth around town. Stop by for free health info, take our survey, and ask us questions.</p>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="upcoming-title">
+    <div class="wrap">
+      <h2 id="upcoming-title">Coming up</h2>
+      {upcoming.length === 0 && <p>No events scheduled right now. Check back soon, or follow us on Instagram.</p>}
+      <ul class="event-list">
+        {upcoming.map((e) => (
+          <li class="event">
+            <time datetime={e.date} class="event-date">
+              <span class="m">{new Date(`${e.date}T12:00:00`).toLocaleDateString('en-US', { month: 'short' })}</span>
+              <span class="d">{Number(e.date.slice(8))}</span>
+            </time>
+            <div>
+              <h3>{e.title}</h3>
+              <p class="event-meta"><Icon name="calendar" size={18} /> {fmt(e.date)}{clean(e.time) && ` · ${e.time}`}</p>
+              {clean(e.location) && <p class="event-meta"><Icon name="map-pin" size={18} /> {e.location}</p>}
+              <p>{e.description.replace(/\s*TODO:.*$/, '')}</p>
+              {e.todo && <p class="note">More details coming soon.</p>}
+            </div>
+          </li>
+        ))}
+      </ul>
+
+      {past.length > 0 && (
+        <>
+          <h2 style="margin-top:2.5rem">Past events</h2>
+          <ul class="event-list event-list--past">
+            {past.map((e) => (
+              <li class="event">
+                <time datetime={e.date} class="event-date">
+                  <span class="m">{new Date(`${e.date}T12:00:00`).toLocaleDateString('en-US', { month: 'short' })}</span>
+                  <span class="d">{Number(e.date.slice(8))}</span>
+                </time>
+                <div>
+                  <h3>{e.title}</h3>
+                  <p class="event-meta">{fmt(e.date)}</p>
+                  <p>{e.description.replace(/\s*TODO:.*$/, '')}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .event-list { list-style: none; padding: 0; margin: 1rem 0 0; display: grid; gap: 1rem; }
+  .event { margin: 0; display: grid; grid-template-columns: 4.5rem 1fr; gap: 1rem; padding: 1.1rem; border: 3px solid var(--black); border-radius: var(--radius); }
+  .event h3 { margin: 0 0 0.35rem; text-transform: uppercase; }
+  .event p { margin: 0 0 0.4rem; }
+  .event-date { display: grid; place-items: center; align-content: center; background: var(--gold); border: 2px solid var(--black); border-radius: var(--radius-sm); height: 4.5rem; font-family: var(--font-display); line-height: 1; text-transform: uppercase; }
+  .event-date .m { font-size: 0.95rem; letter-spacing: 0.08em; }
+  .event-date .d { font-size: 2rem; font-weight: 700; }
+  .event-meta { display: flex; align-items: center; gap: 0.4rem; color: var(--ink-muted); font-weight: 600; }
+  .event-list--past .event { border-width: 2px; border-color: var(--line); }
+  .event-list--past .event-date { background: var(--paper); border-color: var(--line); }
+</style>

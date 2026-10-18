@@ -1,0 +1,130 @@
+---
+// Live content from MyHealthfinder (health.gov) and MedlinePlus (NLM),
+// fetched in the browser from our Netlify Function: /.netlify/functions/health-topic
+// If the function or the APIs are down, we show a short note. The rest of the page still works.
+import topicMap from '../data/topicMap.json';
+
+interface Props { slug: string; title: string }
+const { slug, title } = Astro.props;
+const map = (topicMap as Record<string, { healthfinderId: number | null }>)[slug];
+const hasHealthfinder = Boolean(map?.healthfinderId);
+---
+<section class="topic-block live" id="live" aria-labelledby="live-title" data-topic={slug} data-has-hf={String(hasHealthfinder)}>
+  <div class="live-head">
+    <h2 id="live-title">From trusted health sites</h2>
+    <div class="lang-switch" role="group" aria-label="Language for this section">
+      <button type="button" data-lang="en" aria-pressed="true">English</button>
+      <button type="button" data-lang="es" aria-pressed="false" lang="es">Español</button>
+    </div>
+  </div>
+  <p class="note" style="margin-top:0">Up-to-date info about {title.toLowerCase()} from U.S. government health websites.</p>
+
+  <div class="live-status" aria-live="polite"></div>
+
+  {hasHealthfinder && (
+    <article class="source-card" data-slot="healthfinder" aria-busy="true">
+      <span class="source-label">From MyHealthfinder (health.gov)</span>
+      <div class="skeleton" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+      <span class="visually-hidden">Loading…</span>
+    </article>
+  )}
+
+  <article class="source-card" data-slot="medlineplus" aria-busy="true">
+    <span class="source-label">More from MedlinePlus</span>
+    <div class="skeleton" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+    <span class="visually-hidden">Loading…</span>
+  </article>
+
+  <noscript>
+    <p class="live-unavailable">Turn on JavaScript to see live content here. Our own info above and the links below still work.</p>
+  </noscript>
+</section>
+
+<script>
+  type HF = { title: string; image: string | null; imageAlt: string; url: string; sections: { title: string; html: string }[] };
+  type ML = { title: string; url: string; summary: string };
+  type Payload = { healthfinder: HF | null; medlineplus: ML[]; errors: { source: string }[] };
+
+  const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
+  const ext = '<svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>';
+  const T = {
+    en: { read: 'Read the full article on health.gov', attrHF: 'Source: MyHealthfinder, U.S. Department of Health and Human Services.', attrML: 'Source: MedlinePlus, U.S. National Library of Medicine.', none: 'No MedlinePlus results right now.', down: 'Live content unavailable right now. Our own info on this page and the trusted links below still work.' },
+    es: { read: 'Lea el artículo completo en health.gov', attrHF: 'Fuente: MyHealthfinder, Departamento de Salud y Servicios Humanos de EE. UU.', attrML: 'Fuente: MedlinePlus, Biblioteca Nacional de Medicina de EE. UU.', none: 'No hay resultados de MedlinePlus en este momento.', down: 'El contenido en vivo no está disponible ahora. La información de esta página y los enlaces de abajo siguen funcionando.' },
+  };
+
+  function init(root: HTMLElement) {
+    const topic = root.dataset.topic!;
+    const status = root.querySelector<HTMLElement>('.live-status')!;
+    const hfSlot = root.querySelector<HTMLElement>('[data-slot="healthfinder"]');
+    const mlSlot = root.querySelector<HTMLElement>('[data-slot="medlineplus"]')!;
+    const skeletonHTML = (label: string) => `<span class="source-label">${label}</span><div class="skeleton" aria-hidden="true"><span></span><span></span><span></span><span></span></div><span class="visually-hidden">Loading…</span>`;
+
+    async function load(lang: 'en' | 'es') {
+      const t = T[lang];
+      status.innerHTML = '';
+      if (hfSlot) { hfSlot.hidden = false; hfSlot.setAttribute('aria-busy', 'true'); hfSlot.innerHTML = skeletonHTML('From MyHealthfinder (health.gov)'); }
+      mlSlot.hidden = false; mlSlot.setAttribute('aria-busy', 'true'); mlSlot.innerHTML = skeletonHTML('More from MedlinePlus');
+
+      let data: Payload | null = null;
+      try {
+        const res = await fetch(`/.netlify/functions/health-topic?topic=${encodeURIComponent(topic)}&lang=${lang}`, { signal: AbortSignal.timeout(12000) });
+        if (!res.ok) throw new Error(String(res.status));
+        data = await res.json();
+      } catch {
+        data = null;
+      }
+
+      const hf = data?.healthfinder ?? null;
+      const ml = data?.medlineplus ?? [];
+      if (!data || (hfSlot && !hf) || (!ml.length && data.errors?.some((e) => e.source === 'medlineplus'))) {
+        status.innerHTML = `<p class="live-unavailable">${t.down}</p>`;
+      }
+
+      if (hfSlot) {
+        hfSlot.removeAttribute('aria-busy');
+        if (hf) {
+          hfSlot.innerHTML = `
+            <span class="source-label">From MyHealthfinder (health.gov)</span>
+            <h3 lang="${lang}">${esc(hf.title)}</h3>
+            <div class="hf-body" lang="${lang}">
+              ${hf.image ? `<img src="${esc(hf.image)}" alt="${esc(hf.imageAlt || '')}" loading="lazy" decoding="async">` : ''}
+              ${hf.sections.map((s) => `<h4>${esc(s.title)}</h4>${s.html}`).join('')}
+            </div>
+            <p><a class="read-more" href="${esc(hf.url)}" target="_blank" rel="noopener noreferrer">${t.read} ${ext}<span class="visually-hidden"> (opens in a new tab)</span></a></p>
+            <p class="attribution">${t.attrHF}</p>`;
+        } else {
+          hfSlot.hidden = true;
+        }
+      }
+
+      mlSlot.removeAttribute('aria-busy');
+      if (ml.length) {
+        mlSlot.innerHTML = `
+          <span class="source-label">More from MedlinePlus</span>
+          <ul class="medline-list" lang="${lang}">
+            ${ml.map((d) => `<li><a href="${esc(d.url)}" target="_blank" rel="noopener noreferrer">${esc(d.title)}<span class="visually-hidden"> (opens in a new tab)</span></a>${d.summary ? `<p>${esc(d.summary)}</p>` : ''}</li>`).join('')}
+          </ul>
+          <p class="attribution">${t.attrML}</p>`;
+      } else if (data) {
+        mlSlot.innerHTML = `<span class="source-label">More from MedlinePlus</span><p>${t.none}</p>`;
+      } else {
+        mlSlot.hidden = true;
+      }
+    }
+
+    root.querySelectorAll<HTMLButtonElement>('.lang-switch button').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        root.querySelectorAll('.lang-switch button').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+        load(btn.dataset.lang as 'en' | 'es');
+      });
+    });
+
+    // Only fetch once the section is close to the screen (saves data on phones).
+    const io = new IntersectionObserver((entries) => {
+      if (entries.some((e) => e.isIntersecting)) { io.disconnect(); load('en'); }
+    }, { rootMargin: '600px 0px' });
+    io.observe(root);
+  }
+
+  document.querySelectorAll<HTMLElement>('section.live[data-topic]').forEach(init);
+</script>

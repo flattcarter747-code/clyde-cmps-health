@@ -1,0 +1,65 @@
+{
+  "_note": "AGGREGATE NUMBERS ONLY. Never add individual answers, names, or emails here.",
+  "total": 50,
+  "when": "September 2026",
+  "where": "our health fair booth (QR code survey)",
+  "headline": "78% of people we surveyed said our community isn't educated on health concerns, and 98% said more education would help.",
+  "questions": [
+    {
+      "id": "age",
+      "question": "Age",
+      "chart": "bar",
+      "results": [
+        { "label": "Under 18", "count": 17 },
+        { "label": "18–49", "count": 25 },
+        { "label": "50+", "count": 8 }
+      ]
+    },
+    {
+      "id": "self-educated",
+      "question": "Do you believe you are educated on health concerns?",
+      "chart": "donut",
+      "results": [
+        { "label": "Yes", "count": 36 },
+        { "label": "No", "count": 14 }
+      ]
+    },
+    {
+      "id": "community-educated",
+      "question": "Do you believe our community is educated on health concerns?",
+      "chart": "donut",
+      "results": [
+        { "label": "No", "count": 39 },
+        { "label": "Yes", "count": 11 }
+      ]
+    },
+    {
+      "id": "would-benefit",
+      "question": "Would more health education benefit our community?",
+      "chart": "donut",
+      "results": [
+        { "label": "Yes", "count": 49 },
+        { "label": "No", "count": 1 }
+      ]
+    },
+    {
+      "id": "checkup",
+      "question": "When was your last wellness checkup?",
+      "chart": "donut",
+      "results": [
+        { "label": "Less than a year ago", "count": 36 },
+        { "label": "More than a year ago", "count": 14 }
+      ]
+    }
+  ],
+  "requestedTopics": [
+    "Obesity",
+    "Diabetes and blood sugar",
+    "Heart health",
+    "Food, nutrition, and healthy meal planning",
+    "Mental health",
+    "Organ donation",
+    "Exercise without a gym",
+    "How sugar affects your heart"
+  ]
+}

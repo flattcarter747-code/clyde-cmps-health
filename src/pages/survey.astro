@@ -1,0 +1,98 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Stripes from '../components/Stripes.astro';
+import DonutChart from '../components/DonutChart.astro';
+import BarChart from '../components/BarChart.astro';
+import survey from '../data/survey.json';
+
+const pct = (n: number) => Math.round((n / survey.total) * 100);
+
+// Where each community request lives on this site
+const asks = [
+  { label: 'Obesity', href: '/topics/obesity/' },
+  { label: 'Diabetes and blood sugar', href: '/topics/blood-sugar/' },
+  { label: 'Heart health', href: '/topics/blood-pressure/' },
+  { label: 'Food, nutrition, and meal planning', href: '/topics/eating-right/' },
+  { label: 'Mental health', href: '/topics/mental-health/' },
+  { label: 'Organ donation', href: '/topics/organ-donation/' },
+  { label: 'Exercise without a gym', href: '/topics/obesity/#bonus' },
+  { label: 'How sugar affects your heart', href: '/topics/blood-sugar/#learn' },
+];
+---
+<BaseLayout title="Survey Results" description={`What ${survey.total} Clyde-area neighbors told us about health education in ${survey.when}.`}>
+  <section class="page-hero on-dark">
+    <Stripes variant="corner" />
+    <div class="wrap">
+      <p class="eyebrow" style="color:var(--gold)">Our health fair survey</p>
+      <h1>What <span class="script">Clyde</span> told us</h1>
+      <p class="lead">
+        In {survey.when}, we asked {survey.total} community members to take a quick survey at {survey.where}.
+        Here's what they said.
+      </p>
+    </div>
+  </section>
+
+  <section class="stats section" aria-labelledby="headline-title">
+    <div class="wrap">
+      <h2 id="headline-title" class="visually-hidden">The big takeaway</h2>
+      <p style="font-family:var(--font-display);font-size:clamp(1.5rem,4.5vw,2.25rem);line-height:1.2;font-weight:600;max-width:52rem;margin:0">
+        {survey.headline}
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--paper" aria-labelledby="results-title">
+    <div class="wrap">
+      <h2 id="results-title">The results</h2>
+      <p class="note" style="margin-top:0">Totals from {survey.total} people. We never share anyone's individual answers, names, or emails.</p>
+      <ul class="chart-grid">
+        {survey.questions.map((q) => (
+          <li class:list={['chart-card', { 'chart-card--wide': q.chart === 'bar' }]}>
+            <h3>{q.id === 'age' ? 'Who took our survey (by age)' : `“${q.question}”`}</h3>
+            {q.chart === 'bar'
+              ? <BarChart results={q.results} total={survey.total} question={q.question} />
+              : <DonutChart results={q.results} total={survey.total} question={q.question} />}
+          </li>
+        ))}
+      </ul>
+
+      <details class="table-view">
+        <summary>See all the numbers as a table</summary>
+        <table class="data-table">
+          <caption class="visually-hidden">Survey results, {survey.total} people, {survey.when}</caption>
+          <thead><tr><th scope="col">Question</th><th scope="col">Answer</th><th scope="col">People</th><th scope="col">Percent</th></tr></thead>
+          <tbody>
+            {survey.questions.flatMap((q) =>
+              q.results.map((r, i) => (
+                <tr>
+                  {i === 0 ? <th scope="rowgroup" rowspan={q.results.length}>{q.question}</th> : null}
+                  <td>{r.label}</td><td>{r.count}</td><td>{pct(r.count)}%</td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </details>
+    </div>
+  </section>
+
+  <Stripes flip />
+
+  <section class="section section--paper" aria-labelledby="asks-title" style="padding-top:2rem">
+    <div class="wrap">
+      <p class="eyebrow">You asked, we listened</p>
+      <h2 id="asks-title">We built this site around what you asked for</h2>
+      <p class="lead" style="max-width:44rem">
+        Our survey also asked what health topics people wanted to learn more about. These were the most common answers.
+        Each one has a home on this site.
+      </p>
+      <ul class="ask-list">
+        {asks.map((a) => <li><a class="chip" style="padding-left:1rem" href={a.href}>{a.label}</a></li>)}
+      </ul>
+      <p style="margin-top:1.5rem">
+        People also told us that <strong>{pct(survey.questions.find((q) => q.id === 'checkup')!.results[1].count)}%</strong> hadn't had a wellness checkup
+        in more than a year. If that's you, <a href="/resources/">find a clinic near Clyde</a>.
+      </p>
+    </div>
+  </section>
+</BaseLayout>

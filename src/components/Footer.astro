@@ -1,0 +1,51 @@
+---
+import Icon from './Icon.astro';
+import Stripes from './Stripes.astro';
+import site from '../data/site.json';
+// TODO_INSTAGRAM_URL: put our real Instagram link in src/data/site.json ("instagramUrl").
+const hasInstagram = site.instagramUrl.startsWith('http');
+---
+<footer class="site-footer on-dark">
+  <div class="wrap">
+    <p class="disclaimer" role="note">
+      <strong>Please note:</strong> This site is for education only and is not medical advice. Talk to your doctor about your health. In an emergency, call 911.
+    </p>
+    <div class="footer-grid">
+      <div>
+        <a class="logo" href="/">
+          <span class="script">Clyde</span>
+          <span class="logo-text">Know Your Health<small>CmPS '26–'27</small></span>
+        </a>
+        <p style="margin-top:0.75rem;max-width:26rem">Plain-language health info for Clyde, Abilene, and Callahan County, made by students who care about this town.</p>
+      </div>
+      <div>
+        <h2>Explore</h2>
+        <ul>
+          <li><a href="/#topics">Health topics</a></li>
+          <li><a href="/survey/">Our survey results</a></li>
+          <li><a href="/events/">Events</a></li>
+          <li><a href="/about/">About our team</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Get help</h2>
+        <ul>
+          <li><a href="tel:911"><Icon name="phone" size={18} />Emergency: call 911</a></li>
+          <li><a href="tel:988"><Icon name="phone" size={18} />Crisis line: call or text 988</a></li>
+          <li><a href="/resources/"><Icon name="map-pin" size={18} />Help near Clyde</a></li>
+          <li>
+            <a href={hasInstagram ? site.instagramUrl : '#'} rel="noopener" aria-disabled={hasInstagram ? undefined : 'true'}>
+              <Icon name="instagram" size={18} />Follow us on Instagram
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <p class="footer-credit">A Clyde High School Community Problem Solving project. © {new Date().getFullYear()} Clyde High School CmPS.</p>
+  </div>
+  <Stripes variant="corner" class="footer-stripes" />
+</footer>
+
+<style>
+  .footer-stripes { right: -90px; bottom: -110px; width: 240px; opacity: 0.35; }
+</style>

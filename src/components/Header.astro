@@ -1,0 +1,49 @@
+---
+import Icon from './Icon.astro';
+
+const links = [
+  { href: '/#topics', label: 'Topics' },
+  { href: '/survey/', label: 'Survey' },
+  { href: '/resources/', label: 'Get Help' },
+  { href: '/events/', label: 'Events' },
+  { href: '/about/', label: 'About Us' },
+];
+const path = Astro.url.pathname.replace(/\/?$/, '/');
+const isCurrent = (href: string) => href !== '/#topics' && path === href;
+---
+<header class="site-header">
+  <div class="wrap">
+    <a class="logo" href="/">
+      <span class="script">Clyde</span>
+      <span class="logo-text">Know Your Health<small>CmPS '26–'27</small></span>
+    </a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
+      <Icon name="menu" class="icon-open" />
+      <Icon name="x" class="icon-close" />
+      <span>Menu</span>
+    </button>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <ul>
+        {links.map((l) => (
+          <li><a href={l.href} aria-current={isCurrent(l.href) ? 'page' : undefined}>{l.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('.nav-toggle');
+  const nav = document.getElementById('site-nav');
+  if (toggle && nav) {
+    const setOpen = (open: boolean) => {
+      toggle.setAttribute('aria-expanded', String(open));
+      nav.classList.toggle('is-open', open);
+    };
+    toggle.addEventListener('click', () => setOpen(toggle.getAttribute('aria-expanded') !== 'true'));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') { setOpen(false); toggle.focus(); }
+    });
+    nav.addEventListener('click', (e) => { if ((e.target as HTMLElement).closest('a')) setOpen(false); });
+  }
+</script>

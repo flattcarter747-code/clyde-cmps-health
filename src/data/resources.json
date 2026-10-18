@@ -1,0 +1,162 @@
+{
+  "_note": "Verified October 2026 on each organization's official website. Re-check names, addresses, and phone numbers each semester. Only add a resource after confirming it on an official site.",
+  "_todo": [
+    "TODO: Confirm the street address of the ResourceCare clinic in Clyde (phone confirmed; address only found on third-party directories).",
+    "TODO: Confirm whether Callahan County Medical Clinic (Archer St., Clyde) should be listed. Two different phone numbers were found online, so it was left out.",
+    "TODO: Confirm which organ procurement organization serves Abilene (likely Southwest Transplant Alliance, organ.org). Left out until confirmed.",
+    "TODO: Ask Hendrick Health whether it offers community (non-healthcare-worker) CPR classes. Only BLS for healthcare providers was found."
+  ],
+  "groups": [
+    {
+      "id": "crisis",
+      "title": "Mental health and crisis help",
+      "items": [
+        {
+          "name": "988 Suicide & Crisis Lifeline",
+          "desc": "Free, private support from a trained counselor, 24 hours a day. For anyone who is struggling or worried about someone else.",
+          "phones": [{ "label": "Call or text 988", "tel": "988", "sms": "988" }],
+          "url": "https://988lifeline.org/",
+          "urlLabel": "Chat online at 988lifeline.org"
+        },
+        {
+          "name": "Betty Hardwick Center",
+          "desc": "The local mental health center for Callahan, Taylor, Jones, Shackelford, and Stephens counties.",
+          "address": "2616 S. Clack St., Abilene, TX 79606",
+          "phones": [
+            { "label": "24-hour crisis line: (800) 758-3344", "tel": "18007583344" },
+            { "label": "Main office: (325) 690-5100", "tel": "13256905100" }
+          ],
+          "url": "https://bettyhardwick.org/",
+          "urlLabel": "bettyhardwick.org"
+        }
+      ]
+    },
+    {
+      "id": "hospitals",
+      "title": "Hospitals in Abilene",
+      "items": [
+        {
+          "name": "Hendrick Medical Center",
+          "desc": "Hendrick Health's main hospital, with an emergency room.",
+          "address": "1900 Pine St., Abilene, TX 79601",
+          "phones": [{ "label": "(325) 670-2000", "tel": "13256702000" }],
+          "url": "https://www.hendrickhealth.org/locations/hendrick-medical-center/",
+          "urlLabel": "hendrickhealth.org"
+        },
+        {
+          "name": "Hendrick Medical Center South",
+          "desc": "Formerly Abilene Regional Medical Center. Now part of Hendrick Health, with emergency services.",
+          "address": "6250 US-83, Abilene, TX 79606",
+          "phones": [{ "label": "(325) 428-1000", "tel": "13254281000" }],
+          "url": "https://www.hendrickhealth.org/locations/hendrick-medical-center-south/",
+          "urlLabel": "hendrickhealth.org"
+        }
+      ]
+    },
+    {
+      "id": "clinics",
+      "title": "Checkups and low-cost care",
+      "items": [
+        {
+          "name": "ResourceCare (Clyde clinic)",
+          "desc": "A community health center with a clinic in Clyde. Community health centers charge based on what you can afford.",
+          "phones": [{ "label": "Clyde clinic: (325) 893-4010", "tel": "13258934010" }],
+          "url": "https://resourcecare.org/",
+          "urlLabel": "resourcecare.org"
+        },
+        {
+          "name": "Abilene Community Health Center",
+          "desc": "A community health center run by the Texas Tech School of Nursing. Fees are based on what you can afford.",
+          "address": "1749 Pine St., Abilene, TX 79601",
+          "phones": [{ "label": "(325) 696-0600", "tel": "13256960600" }],
+          "url": "https://www.ttuhsc.edu/combest/abilene",
+          "urlLabel": "ttuhsc.edu"
+        },
+        {
+          "name": "Abilene-Taylor County Public Health District",
+          "desc": "Shots (immunizations), screenings, WIC, and other public health services.",
+          "address": "850 N. 6th St., Abilene, TX 79601",
+          "phones": [{ "label": "(325) 692-5600", "tel": "13256925600" }],
+          "url": "https://www.abilenetx.gov/385/Health-Services",
+          "urlLabel": "abilenetx.gov"
+        },
+        {
+          "name": "Find a Health Center",
+          "desc": "Search for federally funded health centers near you by ZIP code (try 79510 for Clyde).",
+          "url": "https://findahealthcenter.hrsa.gov/",
+          "urlLabel": "findahealthcenter.hrsa.gov"
+        },
+        {
+          "name": "Texas 2-1-1",
+          "desc": "Free help finding food, housing, utility bills, health care, and more. Available 24/7.",
+          "phones": [{ "label": "Dial 2-1-1", "tel": "211" }],
+          "url": "https://www.211texas.org/",
+          "urlLabel": "211texas.org"
+        }
+      ]
+    },
+    {
+      "id": "blood",
+      "title": "Give blood",
+      "items": [
+        {
+          "name": "Hendrick Regional Blood Center",
+          "desc": "Abilene's community blood center, run by Hendrick Health. Blood donated here helps patients in our area. Holiday hours may change, so call ahead.",
+          "address": "1701 Pine St., Abilene, TX 79601",
+          "phones": [{ "label": "(325) 670-2798", "tel": "13256702798" }],
+          "url": "https://hrbc.team448.com/donorportal/donate-blood/",
+          "urlLabel": "Schedule a donation",
+          "extra": { "url": "https://www.hendrickbloodcenter.org/", "label": "hendrickbloodcenter.org" }
+        },
+        {
+          "name": "American Red Cross Blood Drives",
+          "desc": "Find a Red Cross blood drive near you and make an appointment.",
+          "url": "https://www.redcrossblood.org/",
+          "urlLabel": "redcrossblood.org"
+        }
+      ]
+    },
+    {
+      "id": "organ",
+      "title": "Become an organ donor",
+      "items": [
+        {
+          "name": "Donate Life Texas Registry",
+          "desc": "Sign up online in about two minutes. It's free.",
+          "url": "https://www.donatelifetexas.org/register/",
+          "urlLabel": "Register at donatelifetexas.org"
+        },
+        {
+          "name": "At the Texas DPS",
+          "desc": "Say \"yes\" to organ donation when you apply for or renew your Texas driver license or ID card.",
+          "url": "https://www.dps.texas.gov/section/driver-license/voluntary-contributions-and-programs-information",
+          "urlLabel": "dps.texas.gov"
+        }
+      ]
+    },
+    {
+      "id": "cpr",
+      "title": "Learn CPR",
+      "items": [
+        {
+          "name": "American Red Cross CPR Classes (Abilene)",
+          "desc": "In-person, online, and blended CPR and first aid classes.",
+          "url": "https://www.redcross.org/local/texas/take-a-class/cpr-abilene-tx",
+          "urlLabel": "redcross.org"
+        },
+        {
+          "name": "American Heart Association Class Finder",
+          "desc": "Search for CPR and first aid classes taught near you.",
+          "url": "https://atlas.heart.org/",
+          "urlLabel": "atlas.heart.org"
+        },
+        {
+          "name": "Hands-Only CPR Video",
+          "desc": "Learn the two steps of Hands-Only CPR in about 90 seconds. Free, no class needed.",
+          "url": "https://cpr.heart.org/en/cpr-courses-and-kits/hands-only-cpr",
+          "urlLabel": "cpr.heart.org"
+        }
+      ]
+    }
+  ]
+}

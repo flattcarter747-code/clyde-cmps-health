@@ -1,0 +1,49 @@
+---
+import '@fontsource-variable/oswald/wght.css';
+import '@fontsource-variable/source-sans-3/wght.css';
+import '@fontsource/caveat/700.css';
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import site from '../data/site.json';
+// Preload the three fonts used above the fold so text doesn't jump when they load.
+import oswaldUrl from '@fontsource-variable/oswald/files/oswald-latin-wght-normal.woff2?url';
+import caveatUrl from '@fontsource/caveat/files/caveat-latin-700-normal.woff2?url';
+import sourceSansUrl from '@fontsource-variable/source-sans-3/files/source-sans-3-latin-wght-normal.woff2?url';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+const { title, description = site.description } = Astro.props;
+const fullTitle = title ? `${title} | ${site.name}` : `${site.name} | Clyde High School CmPS`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href={oswaldUrl} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={caveatUrl} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={sourceSansUrl} as="font" type="font/woff2" crossorigin />
+    <meta name="theme-color" content="#111111" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content={new URL('/images/banner-closeup-1600.jpg', Astro.site)} />
+    <script is:inline>document.documentElement.classList.replace('no-js', 'js');</script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to main content</a>
+    <Header />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

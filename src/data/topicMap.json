@@ -1,0 +1,57 @@
+{
+  "_note": "Maps each of our topic slugs to a MyHealthfinder v4 TopicId (from itemlist.json?Type=topic, checked Oct 2026) and a MedlinePlus search term. null = no good MyHealthfinder match; the page then shows MedlinePlus only.",
+  "obesity": {
+    "healthfinderId": 30551,
+    "healthfinderTitle": "Aim for a Healthy Weight",
+    "medlineTerm": "obesity",
+    "medlineTermEs": "obesidad"
+  },
+  "blood-pressure": {
+    "healthfinderId": 533,
+    "healthfinderTitle": "Get Your Blood Pressure Checked",
+    "medlineTerm": "high blood pressure",
+    "medlineTermEs": "presión arterial alta"
+  },
+  "blood-sugar": {
+    "healthfinderId": 30536,
+    "healthfinderTitle": "Take Steps to Prevent Type 2 Diabetes",
+    "medlineTerm": "prediabetes diabetes",
+    "medlineTermEs": "prediabetes diabetes"
+  },
+  "eating-right": {
+    "healthfinderId": 30539,
+    "healthfinderTitle": "Eat Healthy",
+    "medlineTerm": "nutrition",
+    "medlineTermEs": "nutrición"
+  },
+  "organ-donation": {
+    "healthfinderId": null,
+    "healthfinderTitle": null,
+    "medlineTerm": "organ donation",
+    "medlineTermEs": "donación de órganos"
+  },
+  "blood-donation": {
+    "healthfinderId": null,
+    "healthfinderTitle": null,
+    "medlineTerm": "blood donation",
+    "medlineTermEs": "donación de sangre"
+  },
+  "mental-health": {
+    "healthfinderId": 30560,
+    "healthfinderTitle": "Manage Stress",
+    "medlineTerm": "mental health",
+    "medlineTermEs": "salud mental"
+  },
+  "cpr": {
+    "healthfinderId": null,
+    "healthfinderTitle": null,
+    "medlineTerm": "CPR",
+    "medlineTermEs": "RCP reanimación cardiopulmonar"
+  },
+  "high-cholesterol": {
+    "healthfinderId": 537,
+    "healthfinderTitle": "Get Your Cholesterol Checked",
+    "medlineTerm": "cholesterol",
+    "medlineTermEs": "colesterol"
+  }
+}
