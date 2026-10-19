@@ -53,13 +53,19 @@ import '../../styles/global.css';
         <input id="save-note" type="text" placeholder="What did you change? (optional)" maxlength="120" />
         <button type="button" class="btn btn--gold" id="save-btn">Save &amp; publish</button>
       </div>
-      <div class="wrap"><p id="save-msg" class="msg" role="status" aria-live="polite"></p></div>
+      <div class="wrap">
+        <p class="cost-note" id="cost-note" hidden>
+          <strong>Heads up:</strong> each time you click Save &amp; publish, the whole site rebuilds, and that costs about 50¢.
+          Make all your changes first, double-check them, then save once.
+        </p>
+        <p id="save-msg" class="msg" role="status" aria-live="polite"></p>
+      </div>
     </div>
   </body>
 </html>
 
 <style is:global>
-  body.admin { background: var(--paper); padding-bottom: 9rem; }
+  body.admin { background: var(--paper); padding-bottom: 16rem; }
   body.admin [hidden] { display: none !important; }
   .admin-bar { background: var(--black); color: var(--white); border-bottom: 4px solid var(--gold); }
   .admin-bar .wrap { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 4rem; flex-wrap: wrap; }
@@ -114,6 +120,8 @@ import '../../styles/global.css';
   .save-bar .wrap:first-child { display: flex; gap: 0.75rem; flex-wrap: wrap; }
   .save-bar input { flex: 1 1 14rem; min-height: 48px; padding: 0.5rem 0.8rem; border-radius: var(--radius-sm); border: 2px solid var(--gold); font: inherit; }
   .save-bar .msg { margin-top: 0.4rem; }
+  .cost-note { margin: 0.5rem 0 0; font-size: 0.95rem; color: #efe9dd; }
+  .cost-note strong { color: var(--gold); }
   .save-bar a { color: var(--gold); }
   .loading { color: var(--ink-muted); font-style: italic; }
 </style>
@@ -216,6 +224,7 @@ import '../../styles/global.css';
 
   function start(r: Role, label: string) {
     role = r;
+    $('#cost-note').hidden = r !== 'editor';
     $('#login').hidden = true; $('#panel').hidden = false; ($('.admin-who') as HTMLElement).hidden = false;
     $('#role-badge').textContent = label;
     const tabs = $('#tabs'); tabs.replaceChildren();
