@@ -30,17 +30,31 @@ const pct = (id: string, label: string) => {
           <a class="btn btn--ghost-light" href="/resources/">Get help near Clyde</a>
         </div>
       </div>
-      <div class="hero-logo">
-        <picture>
-          <source type="image/webp" srcset="/images/health-care-logo-500.webp 500w, /images/health-care-logo-672.webp 672w" sizes="(min-width: 860px) 36vw, 90vw" />
-          <img
-            src="/images/health-care-logo-500.png"
-            srcset="/images/health-care-logo-500.png 500w, /images/health-care-logo-672.png 672w"
-            sizes="(min-width: 860px) 36vw, 90vw"
-            alt="Health Care logo: the word health in blue script above CARE, where the C is a stethoscope, the A is a syringe, and a red plus sign follows."
-            width="672" height="330" fetchpriority="high" decoding="async"
-          />
-        </picture>
+      <div class="logo-stage" id="logo-stage">
+        <div class="plus-field" aria-hidden="true">
+          {Array.from({ length: 9 }, (_, i) => <span class={`plus p${i + 1}`}>+</span>)}
+        </div>
+        <div class="logo-tilt">
+          <div class="logo-float">
+            <div class="hero-logo">
+              <picture>
+                <source type="image/webp" srcset="/images/health-care-logo-500.webp 500w, /images/health-care-logo-672.webp 672w" sizes="(min-width: 860px) 36vw, 90vw" />
+                <img
+                  src="/images/health-care-logo-500.png"
+                  srcset="/images/health-care-logo-500.png 500w, /images/health-care-logo-672.png 672w"
+                  sizes="(min-width: 860px) 36vw, 90vw"
+                  alt="Health Care logo: the word health in blue script above CARE, where the C is a stethoscope, the A is a syringe, and a red plus sign follows."
+                  width="672" height="330" fetchpriority="high" decoding="async"
+                />
+              </picture>
+              <span class="logo-shine" aria-hidden="true"></span>
+            </div>
+          </div>
+        </div>
+        <svg class="ekg" viewBox="0 0 600 80" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+          <path class="ekg-base" d="M0 50 H170 L190 50 L205 20 L222 74 L240 6 L258 66 L272 50 H600" />
+          <path class="ekg-line" pathLength="100" d="M0 50 H170 L190 50 L205 20 L222 74 L240 6 L258 66 L272 50 H600" />
+        </svg>
       </div>
     </div>
   </section>
@@ -109,3 +123,48 @@ const pct = (id: string, label: string) => {
     </div>
   </section>
 </BaseLayout>
+
+<script is:inline>
+  // Home page always opens at the top: on refresh, on the Home/logo link, and on Back.
+  // (A link to a section, like /#topics, still jumps to that section.)
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  const toTop = () => { if (!location.hash) window.scrollTo(0, 0); };
+  toTop();
+  window.addEventListener('load', toTop);
+  window.addEventListener('pageshow', (e) => { if (e.persisted) toTop(); });
+  // Already on the home page? A Home/logo click just goes straight to the top.
+  document.addEventListener('click', (e) => {
+    const link = e.target.closest && e.target.closest('a[href="/"]');
+    if (!link || e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+    e.preventDefault();
+    history.replaceState(null, '', '/');
+    window.scrollTo(0, 0);
+    document.getElementById('main')?.focus({ preventScroll: true });
+  });
+</script>
+
+<script>
+  // Health Care logo: tilt toward the mouse (desktop only, and only if motion is OK).
+  const stage = document.getElementById('logo-stage');
+  const tilt = stage?.querySelector<HTMLElement>('.logo-tilt');
+  const fine = window.matchMedia('(pointer: fine)').matches;
+  const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (stage && tilt && fine && !calm) {
+    let frame = 0;
+    stage.addEventListener('pointermove', (e) => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const r = stage.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width - 0.5;
+        const y = (e.clientY - r.top) / r.height - 0.5;
+        tilt.style.setProperty('--ry', `${(x * 14).toFixed(2)}deg`);
+        tilt.style.setProperty('--rx', `${(-y * 12).toFixed(2)}deg`);
+      });
+    });
+    stage.addEventListener('pointerleave', () => {
+      cancelAnimationFrame(frame);
+      tilt.style.setProperty('--ry', '0deg');
+      tilt.style.setProperty('--rx', '0deg');
+    });
+  }
+</script>

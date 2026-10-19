@@ -211,8 +211,74 @@ a:hover { text-decoration-color: var(--ink); }
 .hero h1 .script { display: block; color: var(--gold); font-size: 1.55em; line-height: 0.85; margin-top: 0.05em; transform: rotate(-4deg); transform-origin: left center; }
 .hero .lead { color: #efe9dd; max-width: 34rem; }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.5rem; }
-.hero-logo { background: var(--white); border: 4px solid var(--gold); border-radius: var(--radius); padding: clamp(0.75rem, 3vw, 1.5rem); box-shadow: 8px 8px 0 var(--gold); transform: rotate(-1.5deg); max-width: 34rem; justify-self: center; width: 100%; }
+/* Health Care logo: sticker slap-in, float, heartbeat, shine, EKG line, rising pluses.
+   Layers: .logo-tilt (mouse tilt, JS) > .logo-float (bob) > .hero-logo (slap-in) > picture (heartbeat) */
+.logo-stage { position: relative; perspective: 900px; justify-self: center; width: 100%; max-width: 34rem; padding: 1.5rem 0.5rem 0; }
+.logo-tilt { transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform 0.25s ease-out; transform-style: preserve-3d; }
+.logo-float { animation: logo-float 6s ease-in-out 1.4s infinite; }
+.hero-logo {
+  position: relative; overflow: hidden;
+  background: var(--white); border: 4px solid var(--gold); border-radius: var(--radius);
+  padding: clamp(0.75rem, 3vw, 1.5rem); box-shadow: 8px 8px 0 var(--gold);
+  transform: rotate(-1.5deg);
+  animation: logo-slap 0.9s cubic-bezier(0.2, 0.9, 0.3, 1.25) 0.15s both;
+}
 .hero-logo img { width: 100%; height: auto; }
+.hero-logo picture { display: block; transform-origin: 82% 55%; animation: logo-beat 2.4s ease-in-out 1.6s infinite; }
+.logo-shine {
+  position: absolute; inset: -20% auto -20% -60%; width: 40%;
+  background: linear-gradient(100deg, transparent 0%, rgba(255, 255, 255, 0.85) 50%, transparent 100%);
+  transform: skewX(-18deg) translateX(0); pointer-events: none;
+  animation: logo-shine 5s ease-in-out 1.2s infinite;
+}
+.ekg { display: block; width: 100%; height: 56px; margin-top: 0.6rem; overflow: visible; }
+.ekg path { fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.ekg-base { stroke: rgba(197, 179, 88, 0.22); }
+.ekg-line { stroke: var(--gold); stroke-dasharray: 18 100; stroke-dashoffset: 18; filter: drop-shadow(0 0 4px rgba(197, 179, 88, 0.9)); animation: ekg-run 2.4s linear 1.6s infinite; }
+.plus-field { position: absolute; inset: 0; pointer-events: none; overflow: visible; }
+.plus { position: absolute; font-family: var(--font-display); font-weight: 700; line-height: 1; color: var(--gold); opacity: 0; animation: plus-rise 5s ease-out infinite; }
+.plus.p1 { left: -7%;  bottom: 20%; font-size: 2.4rem; animation-delay: 1.4s; }
+.plus.p2 { left: -2%;  bottom: 55%; font-size: 1.5rem;   animation-delay: 3.6s; color: #fff; }
+.plus.p3 { left: 101%; bottom: 25%; font-size: 3.0rem;   animation-delay: 2.4s; color: #e0473f; }
+.plus.p4 { left: 105%; bottom: 60%; font-size: 1.8rem; animation-delay: 4.8s; }
+.plus.p5 { left: 22%;  bottom: 82%; font-size: 2.1rem; animation-delay: 3s;   color: #fff; }
+.plus.p6 { left: 48%;  bottom: 86%; font-size: 1.5rem;   animation-delay: 5.6s; color: #e0473f; }
+.plus.p7 { left: 74%;  bottom: 82%; font-size: 2.25rem; animation-delay: 1.9s; }
+.plus.p8 { left: -5%;  bottom: 0%;  font-size: 1.65rem; animation-delay: 6.2s; color: #fff; }
+.plus.p9 { left: 98%;  bottom: 0%;  font-size: 2.7rem; animation-delay: 7.1s; }
+
+@keyframes logo-slap {
+  0%   { opacity: 0; transform: translateY(-140px) rotate(-16deg) scale(1.25); }
+  55%  { opacity: 1; transform: translateY(8px) rotate(1deg) scale(0.94, 1.04); }
+  75%  { transform: translateY(-6px) rotate(-2.5deg) scale(1.02, 0.98); }
+  100% { opacity: 1; transform: translateY(0) rotate(-1.5deg) scale(1); }
+}
+@keyframes logo-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes logo-beat {
+  0%, 40%, 100% { transform: scale(1); }
+  8%  { transform: scale(1.045); }
+  16% { transform: scale(1); }
+  24% { transform: scale(1.03); }
+}
+@keyframes logo-shine { 0%, 55% { transform: skewX(-18deg) translateX(0); } 85%, 100% { transform: skewX(-18deg) translateX(420%); } }
+@keyframes ekg-run { from { stroke-dashoffset: 18; } to { stroke-dashoffset: -100; } }
+@keyframes plus-rise {
+  0%   { opacity: 0; transform: translateY(0) rotate(0deg) scale(0.6); }
+  12%  { opacity: 0.9; }
+  70%  { opacity: 0.6; }
+  100% { opacity: 0; transform: translateY(-120px) rotate(90deg) scale(1.1); }
+}
+@media (max-width: 859px) {
+  .logo-stage { max-width: 26rem; padding-top: 0.5rem; }
+  .ekg { height: 44px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-logo, .logo-float, .hero-logo picture, .logo-shine, .ekg-line, .plus { animation: none !important; }
+  .hero-logo { transform: rotate(-1.5deg); }
+  .logo-shine, .plus-field { display: none; }
+  .ekg-line { stroke-dasharray: none; filter: none; }
+  .logo-tilt { transform: none !important; }
+}
 .hero .stripes-corner { top: -20px; right: -30px; opacity: 0.9; }
 @media (max-width: 859px) { .hero .stripes-corner { width: 170px; right: -40px; top: -20px; } }
 
