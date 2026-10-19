@@ -17,6 +17,7 @@ const isCurrent = (href: string) => href !== '/#topics' && path === href;
       <span class="script">Clyde</span>
       <span class="logo-text">Know Your Health<small>CmPS '26–'27</small></span>
     </a>
+    <p class="header-credit">Website by <a href="https://collinsinnovations.org/" rel="noopener">Carter Collins</a></p>
     <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
       <Icon name="menu" class="icon-open" />
       <Icon name="x" class="icon-close" />
@@ -28,6 +29,7 @@ const isCurrent = (href: string) => href !== '/#topics' && path === href;
           <li><a href={l.href} aria-current={isCurrent(l.href) ? 'page' : undefined}>{l.label}</a></li>
         ))}
       </ul>
+      <p class="menu-credit">Website by <a href="https://collinsinnovations.org/" rel="noopener">Carter Collins</a></p>
     </nav>
   </div>
 </header>
