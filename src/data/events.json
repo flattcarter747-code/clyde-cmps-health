@@ -2,28 +2,25 @@
   "_howto": "Add one object per event. date = YYYY-MM-DD. Events before today move to 'Past events' automatically on the next deploy. Set \"todo\": true to show a 'details coming soon' note; remove it when details are confirmed.",
   "events": [
     {
-      "title": "Health Fair Booth",
-      "date": "2026-09-19",
+      "title": "Pecan Fest",
+      "date": "2026-09-26",
       "time": "TODO: time",
       "location": "TODO: location",
-      "description": "Our first booth! We shared health flyers and ran our community health survey by QR code. TODO: confirm exact date.",
-      "todo": true
+      "description": "Our first booth! We shared health flyers and ran our community health survey by QR code. TODO: confirm exact date."
     },
     {
-      "title": "CmPS Booth at a Clyde Bulldogs Event",
-      "date": "2026-11-07",
-      "time": "TODO: time",
+      "title": "Fall Festival At FBC Clyde",
+      "date": "2026-10-28",
+      "time": "5:30 p.m. - 7:00 p.m.",
       "location": "TODO: location, Clyde, TX",
-      "description": "Stop by for free health info, blood pressure tips, and a quick quiz. TODO: confirm event and date.",
-      "todo": true
+      "description": "Stop by for free health info, blood pressure tips, and a quick quiz. We also will be passing out stickers and flyers."
     },
     {
-      "title": "Community Health Fair",
-      "date": "2027-02-20",
-      "time": "TODO: time",
-      "location": "TODO: location, Clyde, TX",
-      "description": "Our big health fair with local health partners. Bring the whole family. TODO: confirm date, partners, and location.",
-      "todo": true
+      "title": "Health Fair",
+      "date": "2026-11-16",
+      "time": "6:00 p.m. - 8:00 p.m.",
+      "location": "Clyde High School Cafeteria",
+      "description": "Our big health fair with local health partners. Bring the whole family."
     }
   ]
 }
